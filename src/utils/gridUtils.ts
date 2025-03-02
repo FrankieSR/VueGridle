@@ -10,9 +10,7 @@ interface GridNode {
     grid: Rect;
 }
 
-// Cache to store collision results for given rectangle parameters.
 const collisionCache = new Map<string, boolean>();
-// Stores a numerical hash representing the state of all nodes.
 let lastNodesHash = 0;
 
 /**

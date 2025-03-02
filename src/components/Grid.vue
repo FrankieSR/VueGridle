@@ -83,7 +83,6 @@
     });
 
     const handlePointerMove = (event: MouseEvent | TouchEvent) => {
-        console.log('Pointer move triggered', event);
         if (rAF === null) {
             rAF = requestAnimationFrame(() => {
                 if (activeItem.value) {
@@ -100,28 +99,28 @@
         position: relative;
         width: 100%;
         height: 100%;
-        transition: 0.1s ease-in-out;
-        background-color: white;
+        transition: var(--grid-transition);
+        background-color: var(--grid-bg-color);
     }
 
     .grid-active {
-        background: rgba(230, 240, 255, 0.95);
+        background: var(--grid-active-bg-color);
         background-image:
             linear-gradient(
                 0deg,
-                transparent 48px,
-                rgba(120, 150, 255, 0.2) 49px,
-                rgba(120, 150, 255, 0.2) 50px,
-                transparent 51px
+                transparent calc(var(--grid-cell-size) - 2px),
+                var(--grid-line-color) calc(var(--grid-cell-size) - 1px),
+                var(--grid-line-color) var(--grid-cell-size),
+                transparent calc(var(--grid-cell-size) + 1px)
             ),
             linear-gradient(
                 90deg,
-                transparent 48px,
-                rgba(120, 150, 255, 0.2) 49px,
-                rgba(120, 150, 255, 0.2) 50px,
-                transparent 51px
+                transparent calc(var(--grid-cell-size) - 2px),
+                var(--grid-line-color) calc(var(--grid-cell-size) - 1px),
+                var(--grid-line-color) var(--grid-cell-size),
+                transparent calc(var(--grid-cell-size) + 1px)
             );
-        background-size: 50px 50px;
-        box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
+        background-size: var(--grid-cell-size) var(--grid-cell-size);
+        box-shadow: var(--grid-active-inner-shadow);
     }
 </style>
