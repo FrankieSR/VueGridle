@@ -1,6 +1,6 @@
 <template>
     <div class="app-container">
-        <h1 class="title">Vue Grid Layout Demo</h1>
+        <h1 class="title">VueBlocks</h1>
         <Grid :gridCellSize="50" class="grid-demo">
             <GridItem
                 v-for="item in layout"
@@ -13,11 +13,10 @@
                 :allNodes="layout"
                 :draggable="true"
                 :resizable="true"
+                :free-drag="item.freeDrag"
                 v-model="item.grid"
                 :minWidth="100"
                 :minHeight="100"
-                :maxWidth="200"
-                :maxHeight="200"
                 @drag-start="onDragStart(item.id)"
                 @drag="(x, y) => onDrag(item.id, x, y)"
                 @drag-stop="(x, y) => onDragStop(item.id, x, y)"
@@ -30,7 +29,7 @@
                 @drop="(nodeId, x, y) => onDrop(item.id, x, y)"
                 @collision-detected="(collidingIds) => onCollisionDetected(item.id, collidingIds)"
             >
-                <div class="grid-item-content">{{ item.id }}</div>
+                <div class="grid-item-content"></div>
             </GridItem>
         </Grid>
     </div>
@@ -42,9 +41,9 @@
     import GridItem from './components/GridItem.vue';
 
     const layout = ref([
-        { id: 'item-1', grid: { x: 50, y: 50, w: 200, h: 100 } },
-        { id: 'item-2', grid: { x: 300, y: 200, w: 200, h: 100 } },
-        { id: 'item-3', grid: { x: 300, y: 200, w: 200, h: 100 } },
+        { id: 'item-1', freeDrag: false, grid: { x: 50, y: 50, w: 200, h: 100 } },
+        { id: 'item-2', freeDrag: false, grid: { x: 300, y: 200, w: 200, h: 100 } },
+        { id: 'free drag', freeDrag: true, grid: { x: 300, y: 200, w: 200, h: 100, z: 2 } },
     ]);
 
     const onDragStart = (nodeId: string) => {

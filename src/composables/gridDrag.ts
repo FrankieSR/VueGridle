@@ -14,7 +14,6 @@ export function useGridDrag(
     position: Ref<{ x: number; y: number }>,
     emit: GridItemEmits,
 ) {
-    const DEFAULT_ITEM_SIZE = 100;
     const gridContext = inject<GridContext>('gridContext')!;
 
     const isDragging = ref(false);
@@ -37,12 +36,7 @@ export function useGridDrag(
             onMouseMove,
             onMouseUp: stopDrag,
             id: props.nodeId,
-            rect: {
-                x: position.value.x,
-                y: position.value.y,
-                w: props.w ?? DEFAULT_ITEM_SIZE,
-                h: props.h ?? DEFAULT_ITEM_SIZE,
-            },
+            rect: { ...position.value, w: props.w ?? 200, h: props.h ?? 100 },
         });
 
         addGlobalListeners(onMouseMove, stopDrag);
@@ -56,15 +50,17 @@ export function useGridDrag(
         const deltaX = clientX - startMouse.value.x;
         const deltaY = clientY - startMouse.value.y;
 
-        const w = props.w ?? DEFAULT_ITEM_SIZE;
-        const h = props.h ?? DEFAULT_ITEM_SIZE;
+        const w = props.w ?? 200;
+        const h = props.h ?? 100;
         let newX = clamp(startPosition.value.x + deltaX, 0, gridContext.gridWidth.value - w);
         let newY = clamp(startPosition.value.y + deltaY, 0, gridContext.gridHeight.value - h);
 
         newX = props.freeDrag ? newX : gridSnap(newX, gridContext.gridCellSize.value);
         newY = props.freeDrag ? newY : gridSnap(newY, gridContext.gridCellSize.value);
 
-        if (checkCollision(props.nodeId, newX, newY, w, h, props.allNodes)) {
+        if (
+            checkCollision(props.nodeId, newX, newY, w, h, props.allNodes, props.freeDrag ?? false)
+        ) {
             const collidingIds = props.allNodes
                 .filter(
                     (node: GridNode) =>
@@ -75,14 +71,26 @@ export function useGridDrag(
             emit('collisionDetected', collidingIds);
         }
 
-        if (props.freeDrag || !checkCollision(props.nodeId, newX, newY, w, h, props.allNodes)) {
+        if (
+            props.freeDrag ||
+            !checkCollision(props.nodeId, newX, newY, w, h, props.allNodes, props.freeDrag ?? false)
+        ) {
             position.value = { x: newX, y: newY };
+            if (props.nodeId === gridContext.activeItemId.value) {
+                gridContext.updateActiveItemRect({
+                    x: newX,
+                    y: newY,
+                    w: w,
+                    h: h,
+                });
+            }
             emit('drag', newX, newY);
         }
     };
 
     const onMouseMove = (event: MouseEvent | TouchEvent) => {
         latestEvent = event;
+
         if (rafId === null && isDragging.value) {
             rafId = requestAnimationFrame(() => {
                 if (latestEvent) {
@@ -104,16 +112,19 @@ export function useGridDrag(
             cancelAnimationFrame(rafId);
             rafId = null;
         }
+
         latestEvent = null;
+
         removeGlobalListeners(onMouseMove, stopDrag);
         gridContext.clearActiveItem();
+
         emit('dragStop', position.value.x, position.value.y);
 
         emit('update:modelValue', {
             x: position.value.x,
             y: position.value.y,
-            w: props.w ?? DEFAULT_ITEM_SIZE,
-            h: props.h ?? DEFAULT_ITEM_SIZE,
+            w: props.w ?? 200,
+            h: props.h ?? 100,
         });
 
         emit('drop', props.nodeId, position.value.x, position.value.y);

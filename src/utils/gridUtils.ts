@@ -8,6 +8,7 @@ interface Rect {
 interface GridNode {
     id: string;
     grid: Rect;
+    freeDrag: boolean;
 }
 
 const collisionCache = new Map<string, boolean>();
@@ -112,42 +113,36 @@ export const checkCollision = (
     w: number,
     h: number,
     nodes: GridNode[],
+    freeDrag: boolean,
 ): boolean => {
-    // If there are fewer than two nodes, collision is impossible.
     if (nodes.length <= 1) return false;
 
-    // Create a cache key based on the current rectangle parameters.
-    const cacheKey = `${nodeId}:${x},${y},${w},${h}`;
-    // Compute a numerical hash for the current state of nodes.
+    const cacheKey = `${nodeId}:${x},${y},${w},${h}:${freeDrag}`;
     const nodesHash = generateNodesHash(nodes);
 
-    // If the nodes' state has changed, clear the collision cache.
+    console.log(nodesHash, 'nodesHash');
+
     if (nodesHash !== lastNodesHash) {
         collisionCache.clear();
         lastNodesHash = nodesHash;
     }
 
-    // Return the cached result if it exists.
     if (collisionCache.has(cacheKey)) {
         return collisionCache.get(cacheKey)!;
     }
 
     const rect: Rect = { x, y, w, h };
-
-    // Check for collision by testing all nodes (excluding the one with the same nodeId).
-    const hasCollision = nodes.some(({ id, grid }) => {
+    const hasCollision = nodes.some(({ id, grid, freeDrag: otherFreeDrag }) => {
         if (id === nodeId) return false;
+        if (!freeDrag && otherFreeDrag) return false;
+
         return isCollision(rect, grid);
     });
 
-    // Cache and return the collision result.
     collisionCache.set(cacheKey, hasCollision);
     return hasCollision;
 };
 
-/**
- * Clears the collision cache.
- */
 export const clearCollisionCache = (): void => {
     collisionCache.clear();
 };

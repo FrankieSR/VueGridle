@@ -15,10 +15,8 @@ export function useGridResize(
     size: Ref<{ w: number; h: number }>,
     emit: GridItemEmits,
 ) {
-    const gridContext = inject<GridContext>('gridContext')!;
-
-    const DEFAULT_MAX_SIZE = 500;
     const DEFAULT_MIN_SIZE = 50;
+    const gridContext = inject<GridContext>('gridContext')!;
 
     const isResizing = ref(false);
     const resizeDirection = ref<string | null>(null);
@@ -58,13 +56,6 @@ export function useGridResize(
         if (!isResizing.value) return;
 
         const { clientX, clientY } = getClientCoordinates(event);
-        const deltaX = clientX - startMouse.value.x;
-        const deltaY = clientY - startMouse.value.y;
-
-        const minWidth = props.minWidth ?? DEFAULT_MIN_SIZE;
-        const minHeight = props.minHeight ?? DEFAULT_MIN_SIZE;
-        const maxWidth = props.maxWidth ?? DEFAULT_MAX_SIZE;
-        const maxHeight = props.maxHeight ?? DEFAULT_MAX_SIZE;
 
         const newRect = {
             x: startPosition.value.x,
@@ -73,14 +64,24 @@ export function useGridResize(
             h: startSize.value.h,
         };
 
+        const deltaX = clientX - startMouse.value.x;
+        const deltaY = clientY - startMouse.value.y;
+
+        const minWidth = props.minWidth ?? DEFAULT_MIN_SIZE;
+        const minHeight = props.minHeight ?? DEFAULT_MIN_SIZE;
+        const gridMaxWidth = gridContext.gridWidth.value - newRect.x;
+        const gridMaxHeight = gridContext.gridHeight.value - newRect.y;
+        const maxWidth =
+            props.maxWidth !== undefined ? Math.min(props.maxWidth, gridMaxWidth) : gridMaxWidth;
+        const maxHeight =
+            props.maxHeight !== undefined
+                ? Math.min(props.maxHeight, gridMaxHeight)
+                : gridMaxHeight;
+
         const directions = directionSet.value;
         if (directions.size > 0) {
             if (directions.has('right')) {
-                newRect.w = clamp(
-                    newRect.w + deltaX,
-                    minWidth,
-                    Math.min(maxWidth, gridContext.gridWidth.value - newRect.x),
-                );
+                newRect.w = clamp(newRect.w + deltaX, minWidth, maxWidth);
             }
             if (directions.has('left')) {
                 const rightEdge = startPosition.value.x + startSize.value.w;
@@ -88,16 +89,13 @@ export function useGridResize(
                 newRect.w = clamp(rightEdge - newRect.x, minWidth, maxWidth);
             }
             if (directions.has('bottom')) {
-                newRect.h = clamp(
-                    newRect.h + deltaY,
-                    minHeight,
-                    Math.min(maxHeight, gridContext.gridHeight.value - newRect.y),
-                );
+                newRect.h = clamp(newRect.h + deltaY, minHeight, maxHeight);
             }
             if (directions.has('top')) {
                 const bottomEdge = startPosition.value.y + startSize.value.h;
-                newRect.y = clamp(startPosition.value.y + deltaY, 0, bottomEdge - minHeight);
-                newRect.h = clamp(bottomEdge - newRect.y, minHeight, maxHeight);
+                const potentialHeight = bottomEdge - (startPosition.value.y + deltaY);
+                newRect.h = clamp(potentialHeight, minHeight, maxHeight);
+                newRect.y = bottomEdge - newRect.h;
             }
         }
 
@@ -109,6 +107,7 @@ export function useGridResize(
         };
 
         let collidingIds: string[] = [];
+
         const hasCollision =
             !props.freeDrag &&
             checkCollision(
@@ -118,6 +117,7 @@ export function useGridResize(
                 snappedRect.w,
                 snappedRect.h,
                 props.allNodes,
+                props.freeDrag ?? false,
             );
 
         if (hasCollision) {
@@ -127,18 +127,30 @@ export function useGridResize(
                 }
                 return ids;
             }, []);
+
             emit('collisionDetected', collidingIds);
         }
 
         if (props.freeDrag || !hasCollision) {
             position.value = { x: snappedRect.x, y: snappedRect.y };
             size.value = { w: snappedRect.w, h: snappedRect.h };
+
+            if (props.nodeId === gridContext.activeItemId.value) {
+                gridContext.updateActiveItemRect({
+                    x: snappedRect.x,
+                    y: snappedRect.y,
+                    w: snappedRect.w,
+                    h: snappedRect.h,
+                });
+            }
+
             emit('resize', snappedRect.x, snappedRect.y, snappedRect.w, snappedRect.h);
         }
     };
 
     const onMouseMove = (event: MouseEvent | TouchEvent) => {
         latestEvent = event;
+
         if (rafId === null && isResizing.value) {
             rafId = requestAnimationFrame(() => {
                 if (latestEvent) {

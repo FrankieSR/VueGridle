@@ -16,17 +16,19 @@ export function useGridActivation(
             onMouseUp: () => {},
             id: props.nodeId,
             rect: {
-                x: props.x ?? 0, // Значение по умолчанию
-                y: props.y ?? 0, // Значение по умолчанию
-                w: props.w ?? 200, // Значение по умолчанию
-                h: props.h ?? 100, // Значение по умолчанию
+                x: props.x ?? 0,
+                y: props.y ?? 0,
+                w: props.w ?? 200,
+                h: props.h ?? 100,
             },
         });
     };
 
     const activateItem = () => {
         if (isDragging.value || isResizing.value) return;
+
         setActiveItem();
+
         emit('itemActivated', props.nodeId);
     };
 
@@ -34,6 +36,7 @@ export function useGridActivation(
         if (!item || !item.value || item.value.contains(event.target as Node)) return;
         if (gridContext.activeItemId.value === props.nodeId) {
             gridContext.clearActiveItem();
+
             emit('itemDeactivated', props.nodeId);
         }
     };

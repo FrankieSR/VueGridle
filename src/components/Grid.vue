@@ -47,23 +47,6 @@
         }
     };
 
-    onMounted(() => {
-        if (gridContainer.value) {
-            updateSize();
-            resizeObserver = new ResizeObserver(() => {
-                updateSize();
-            });
-            resizeObserver.observe(gridContainer.value);
-        }
-    });
-
-    onUnmounted(() => {
-        if (resizeObserver && gridContainer.value) {
-            resizeObserver.unobserve(gridContainer.value);
-        }
-        activeItem.value = null;
-    });
-
     provide<GridContext>('gridContext', {
         gridContainer,
         gridWidth,
@@ -103,6 +86,23 @@
             activeItem.value.onMouseUp();
         }
     };
+
+    onMounted(() => {
+        if (gridContainer.value) {
+            updateSize();
+            resizeObserver = new ResizeObserver(() => {
+                updateSize();
+            });
+            resizeObserver.observe(gridContainer.value);
+        }
+    });
+
+    onUnmounted(() => {
+        if (resizeObserver && gridContainer.value) {
+            resizeObserver.unobserve(gridContainer.value);
+        }
+        activeItem.value = null;
+    });
 </script>
 
 <style scoped>

@@ -45,8 +45,7 @@
         allNodes: () => [],
         minWidth: 50,
         minHeight: 50,
-        maxWidth: 500,
-        maxHeight: 500,
+        z: 1,
     });
 
     const emit = defineEmits<GridItemEmits>();
@@ -73,6 +72,7 @@
         background-color: var(--grid-item-bg-color);
         transition: var(--grid-item-transition);
         will-change: transform, box-shadow;
+        user-select: none;
     }
 
     .grid-item:hover {
@@ -112,19 +112,16 @@
         left: var(--resize-handle-offset);
         cursor: nwse-resize;
     }
-
     .top-right {
         top: var(--resize-handle-offset);
         right: var(--resize-handle-offset);
         cursor: nesw-resize;
     }
-
     .bottom-left {
         bottom: var(--resize-handle-offset);
         left: var(--resize-handle-offset);
         cursor: nesw-resize;
     }
-
     .bottom-right {
         bottom: var(--resize-handle-offset);
         right: var(--resize-handle-offset);

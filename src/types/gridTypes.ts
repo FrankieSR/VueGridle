@@ -10,6 +10,7 @@ export interface Rect {
 export interface GridNode {
     id: string;
     grid: Rect;
+    freeDrag: boolean;
 }
 
 export interface ContextItem {
@@ -47,6 +48,7 @@ export interface GridItemProps {
     minHeight?: number;
     maxWidth?: number;
     maxHeight?: number;
+    z?: number;
 }
 
 export interface GridItemEmits {

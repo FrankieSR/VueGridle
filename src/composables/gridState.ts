@@ -20,9 +20,11 @@ export function useGridState(props: GridItemProps, emit: GridItemEmits) {
         width: `${size.value.w}px`,
         height: `${size.value.h}px`,
         transform: `translate3d(${position.value.x}px, ${position.value.y}px, 0)`,
+        zIndex: props.z ?? 1,
     }));
 
     const PROXIMITY_THRESHOLD = 150;
+
     const isNearActive = computed(() => {
         if (!gridContext.activeItemRect.value || gridContext.activeItemId.value === props.nodeId) {
             return false;
@@ -39,6 +41,7 @@ export function useGridState(props: GridItemProps, emit: GridItemEmits) {
     const getRectDistance = (rect1: any, rect2: any) => {
         const dx = Math.max(rect2.x - (rect1.x + rect1.w), rect1.x - (rect2.x + rect2.w), 0);
         const dy = Math.max(rect2.y - (rect1.y + rect1.h), rect1.y - (rect2.y + rect2.h), 0);
+
         return Math.sqrt(dx * dx + dy * dy);
     };
 
