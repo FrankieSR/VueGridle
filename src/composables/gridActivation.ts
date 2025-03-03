@@ -1,26 +1,36 @@
-import { inject, onMounted, onUnmounted } from 'vue';
+import { inject, onMounted, onUnmounted, type Ref } from 'vue';
+import { type GridItemProps, type GridItemEmits, type GridContext } from '@/types/gridTypes';
 
-export function useGridActivation(props: any, emit: any, item: any) {
-    const gridContext = inject('gridContext') as any;
+export function useGridActivation(
+    props: GridItemProps,
+    emit: GridItemEmits,
+    item: Ref<HTMLElement | null>,
+    isDragging: Ref<boolean>,
+    isResizing: Ref<boolean>,
+) {
+    const gridContext = inject<GridContext>('gridContext')!;
 
     const setActiveItem = () => {
         gridContext.setActiveItem({
-            onMouseMove: null, // Будет передаваться из других модулей при необходимости
-            onMouseUp: null,
+            onMouseMove: () => {},
+            onMouseUp: () => {},
             id: props.nodeId,
-            rect: { x: props.x, y: props.y, w: props.w, h: props.h },
+            rect: {
+                x: props.x ?? 0, // Значение по умолчанию
+                y: props.y ?? 0, // Значение по умолчанию
+                w: props.w ?? 200, // Значение по умолчанию
+                h: props.h ?? 100, // Значение по умолчанию
+            },
         });
     };
 
     const activateItem = () => {
-        if (!props.draggable && !props.resizable) {
-            setActiveItem();
-            emit('itemActivated', props.nodeId);
-        }
+        if (isDragging.value || isResizing.value) return;
+        setActiveItem();
+        emit('itemActivated', props.nodeId);
     };
 
     const handleOutsideClick = (event: MouseEvent) => {
-        // Проверяем, что item существует и инициализирован
         if (!item || !item.value || item.value.contains(event.target as Node)) return;
         if (gridContext.activeItemId.value === props.nodeId) {
             gridContext.clearActiveItem();
@@ -28,12 +38,10 @@ export function useGridActivation(props: any, emit: any, item: any) {
         }
     };
 
-    // Добавляем слушатель только после монтирования
     onMounted(() => {
         document.addEventListener('click', handleOutsideClick);
     });
 
-    // Удаляем слушатель при размонтировании
     onUnmounted(() => {
         document.removeEventListener('click', handleOutsideClick);
     });

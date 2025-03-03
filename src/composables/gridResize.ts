@@ -1,21 +1,33 @@
-import { ref, inject, computed } from 'vue';
+import { ref, computed, inject, type Ref } from 'vue';
 import { gridSnap, checkCollision, isCollision } from '@/utils/gridUtils';
 import { clamp, getClientCoordinates } from '@/utils/helpers';
 import { addGlobalListeners, removeGlobalListeners } from '@/utils/eventListeners';
+import {
+    type GridItemProps,
+    type GridItemEmits,
+    type GridContext,
+    type GridNode,
+} from '@/types/gridTypes';
 
-export function useGridResize(props: any, position: any, size: any, emit: any) {
-    const gridContext = inject('gridContext') as any;
+export function useGridResize(
+    props: GridItemProps,
+    position: Ref<{ x: number; y: number }>,
+    size: Ref<{ w: number; h: number }>,
+    emit: GridItemEmits,
+) {
+    const gridContext = inject<GridContext>('gridContext')!;
+
+    const DEFAULT_MAX_SIZE = 500;
+    const DEFAULT_MIN_SIZE = 50;
 
     const isResizing = ref(false);
     const resizeDirection = ref<string | null>(null);
-    const startMouse = ref({ x: 0, y: 0 });
-    const startSize = ref({ w: 0, h: 0 });
-    const startPosition = ref({ x: 0, y: 0 });
-    const resizeHandles = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
+    const startMouse = ref<{ x: number; y: number }>({ x: 0, y: 0 });
+    const startSize = ref<{ w: number; h: number }>({ w: 0, h: 0 });
+    const startPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 });
+    const resizeHandles = ['top-left', 'top-right', 'bottom-left', 'bottom-right'] as const;
 
-    const directionSet = computed(() => {
-        return new Set<string>((resizeDirection.value || '').split('-'));
-    });
+    const directionSet = computed(() => new Set<string>((resizeDirection.value || '').split('-')));
 
     let rafId: number | null = null;
     let latestEvent: MouseEvent | TouchEvent | null = null;
@@ -43,9 +55,16 @@ export function useGridResize(props: any, position: any, size: any, emit: any) {
     };
 
     const updateResize = (event: MouseEvent | TouchEvent) => {
+        if (!isResizing.value) return;
+
         const { clientX, clientY } = getClientCoordinates(event);
         const deltaX = clientX - startMouse.value.x;
         const deltaY = clientY - startMouse.value.y;
+
+        const minWidth = props.minWidth ?? DEFAULT_MIN_SIZE;
+        const minHeight = props.minHeight ?? DEFAULT_MIN_SIZE;
+        const maxWidth = props.maxWidth ?? DEFAULT_MAX_SIZE;
+        const maxHeight = props.maxHeight ?? DEFAULT_MAX_SIZE;
 
         const newRect = {
             x: startPosition.value.x,
@@ -55,23 +74,30 @@ export function useGridResize(props: any, position: any, size: any, emit: any) {
         };
 
         const directions = directionSet.value;
-
         if (directions.size > 0) {
             if (directions.has('right')) {
-                newRect.w = clamp(newRect.w + deltaX, 50, gridContext.gridWidth.value - newRect.x);
+                newRect.w = clamp(
+                    newRect.w + deltaX,
+                    minWidth,
+                    Math.min(maxWidth, gridContext.gridWidth.value - newRect.x),
+                );
             }
             if (directions.has('left')) {
                 const rightEdge = startPosition.value.x + startSize.value.w;
-                newRect.x = clamp(startPosition.value.x + deltaX, 0, rightEdge - 50);
-                newRect.w = rightEdge - newRect.x;
+                newRect.x = clamp(startPosition.value.x + deltaX, 0, rightEdge - minWidth);
+                newRect.w = clamp(rightEdge - newRect.x, minWidth, maxWidth);
             }
             if (directions.has('bottom')) {
-                newRect.h = clamp(newRect.h + deltaY, 50, gridContext.gridHeight.value - newRect.y);
+                newRect.h = clamp(
+                    newRect.h + deltaY,
+                    minHeight,
+                    Math.min(maxHeight, gridContext.gridHeight.value - newRect.y),
+                );
             }
             if (directions.has('top')) {
                 const bottomEdge = startPosition.value.y + startSize.value.h;
-                newRect.y = clamp(startPosition.value.y + deltaY, 0, bottomEdge - 50);
-                newRect.h = bottomEdge - newRect.y;
+                newRect.y = clamp(startPosition.value.y + deltaY, 0, bottomEdge - minHeight);
+                newRect.h = clamp(bottomEdge - newRect.y, minHeight, maxHeight);
             }
         }
 
@@ -83,7 +109,6 @@ export function useGridResize(props: any, position: any, size: any, emit: any) {
         };
 
         let collidingIds: string[] = [];
-
         const hasCollision =
             !props.freeDrag &&
             checkCollision(
@@ -96,7 +121,7 @@ export function useGridResize(props: any, position: any, size: any, emit: any) {
             );
 
         if (hasCollision) {
-            collidingIds = props.allNodes.reduce((ids: string[], node: any) => {
+            collidingIds = props.allNodes.reduce((ids: string[], node: GridNode) => {
                 if (node.id !== props.nodeId && isCollision(snappedRect, node.grid)) {
                     ids.push(node.id);
                 }
@@ -114,7 +139,7 @@ export function useGridResize(props: any, position: any, size: any, emit: any) {
 
     const onMouseMove = (event: MouseEvent | TouchEvent) => {
         latestEvent = event;
-        if (rafId === null) {
+        if (rafId === null && isResizing.value) {
             rafId = requestAnimationFrame(() => {
                 if (latestEvent) {
                     updateResize(latestEvent);
@@ -126,9 +151,16 @@ export function useGridResize(props: any, position: any, size: any, emit: any) {
     };
 
     const stopResize = () => {
+        if (!isResizing.value) return;
         isResizing.value = false;
         gridContext.isManipulating.value = false;
+        if (rafId !== null) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+        }
+        latestEvent = null;
         removeGlobalListeners(onMouseMove, stopResize);
+        gridContext.clearActiveItem();
         emit('resizeStop', position.value.x, position.value.y, size.value.w, size.value.h);
         emit('update:modelValue', {
             x: position.value.x,

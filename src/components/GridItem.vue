@@ -31,46 +31,25 @@
 
 <script lang="ts" setup>
     import { useGridItem } from '@/composables/useGridItem';
+    import { type GridItemProps, type GridItemEmits } from '@/types/gridTypes';
 
-    const props = withDefaults(
-        defineProps<{
-            x?: number;
-            y?: number;
-            w?: number;
-            h?: number;
-            freeDrag?: boolean;
-            resizable?: boolean;
-            draggable?: boolean;
-            nodeId: string;
-            allNodes: any[];
-            modelValue: { x: number; y: number; w: number; h: number };
-        }>(),
-        {
-            x: 0,
-            y: 0,
-            w: 200,
-            h: 100,
-            freeDrag: false,
-            resizable: true,
-            draggable: true,
-            nodeId: '',
-            allNodes: () => [],
-        },
-    );
+    const props = withDefaults(defineProps<GridItemProps>(), {
+        x: 0,
+        y: 0,
+        w: 200,
+        h: 100,
+        freeDrag: false,
+        resizable: true,
+        draggable: true,
+        nodeId: '',
+        allNodes: () => [],
+        minWidth: 50,
+        minHeight: 50,
+        maxWidth: 500,
+        maxHeight: 500,
+    });
 
-    const emit = defineEmits<{
-        (e: 'dragStart'): void;
-        (e: 'dragStop', x: number, y: number): void;
-        (e: 'drag', x: number, y: number): void;
-        (e: 'resizeStart'): void;
-        (e: 'resize', x: number, y: number, w: number, h: number): void;
-        (e: 'resizeStop', x: number, y: number, w: number, h: number): void;
-        (e: 'update:modelValue', value: { x: number; y: number; w: number; h: number }): void;
-        (e: 'itemActivated', nodeId: string): void;
-        (e: 'itemDeactivated', nodeId: string): void;
-        (e: 'drop', nodeId: string, x: number, y: number): void;
-        (e: 'collisionDetected', nodeId: string, collidingIds: string[]): void;
-    }>();
+    const emit = defineEmits<GridItemEmits>();
 
     const {
         item,

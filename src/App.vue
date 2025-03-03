@@ -14,6 +14,10 @@
                 :draggable="true"
                 :resizable="true"
                 v-model="item.grid"
+                :minWidth="100"
+                :minHeight="100"
+                :maxWidth="200"
+                :maxHeight="200"
                 @drag-start="onDragStart(item.id)"
                 @drag="(x, y) => onDrag(item.id, x, y)"
                 @drag-stop="(x, y) => onDragStop(item.id, x, y)"
@@ -112,8 +116,8 @@
     }
 
     .grid-demo {
-        width: 1400px;
-        height: 1400px;
+        width: 800px;
+        height: 800px;
         border: 1px solid var(--grid-item-border-color);
         position: relative;
     }

@@ -3,9 +3,12 @@
         ref="gridContainer"
         class="grid-container"
         :class="{ 'grid-active': isManipulating }"
+        :style="{ '--grid-cell-size': `${gridCellSize}px` }"
         @dragover.prevent
         @mousemove="handlePointerMove"
         @touchmove.prevent="handlePointerMove"
+        @mouseup="handlePointerUp"
+        @touchend="handlePointerUp"
     >
         <slot :gridWidth="gridWidth" :gridHeight="gridHeight" :gridCellSize="gridCellSize" />
     </div>
@@ -13,19 +16,21 @@
 
 <script lang="ts" setup>
     import { ref, provide, onMounted, onUnmounted } from 'vue';
+    import { type GridContext, type Rect } from '@/types/gridTypes';
 
-    const props = defineProps<{ gridCellSize?: number }>();
+    const props = defineProps<{
+        gridCellSize?: number;
+    }>();
 
-    const DEFAULT_GRID_SIZE = 50;
+    const gridCellSize = ref(props.gridCellSize ?? 50);
 
     const gridContainer = ref<HTMLElement | null>(null);
-    const gridWidth = ref(0);
-    const gridHeight = ref(0);
-    const gridCellSize = ref(props.gridCellSize ?? DEFAULT_GRID_SIZE);
+    const gridWidth = ref<number>(0);
+    const gridHeight = ref<number>(0);
 
-    const isManipulating = ref(false);
+    const isManipulating = ref<boolean>(false);
     const activeItemId = ref<string | null>(null);
-    const activeItemRect = ref<{ x: number; y: number; w: number; h: number } | null>(null);
+    const activeItemRect = ref<Rect | null>(null);
 
     const activeItem = ref<{
         onMouseMove: (event: MouseEvent | TouchEvent) => void;
@@ -59,7 +64,7 @@
         activeItem.value = null;
     });
 
-    provide('gridContext', {
+    provide<GridContext>('gridContext', {
         gridContainer,
         gridWidth,
         gridHeight,
@@ -83,13 +88,19 @@
     });
 
     const handlePointerMove = (event: MouseEvent | TouchEvent) => {
-        if (rAF === null) {
+        if (rAF === null && activeItem.value) {
             rAF = requestAnimationFrame(() => {
                 if (activeItem.value) {
                     activeItem.value.onMouseMove(event);
                 }
                 rAF = null;
             });
+        }
+    };
+
+    const handlePointerUp = () => {
+        if (activeItem.value) {
+            activeItem.value.onMouseUp();
         }
     };
 </script>

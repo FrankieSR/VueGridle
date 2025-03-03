@@ -1,11 +1,18 @@
 import { ref, computed, inject, onMounted } from 'vue';
 import { gridSnap } from '@/utils/gridUtils';
+import { type GridItemProps, type GridItemEmits } from '@/types/gridTypes';
 
-export function useGridState(props: any, emit: any) {
-    const gridContext = inject('gridContext') as any;
+export function useGridState(props: GridItemProps, emit: GridItemEmits) {
+    const gridContext = inject<any>('gridContext')!;
 
-    const position = ref({ x: props.x, y: props.y });
-    const size = ref({ w: props.w, h: props.h });
+    const position = ref({
+        x: props.x ?? 0,
+        y: props.y ?? 0,
+    });
+    const size = ref({
+        w: props.w ?? 200,
+        h: props.h ?? 100,
+    });
 
     const isActive = computed(() => gridContext.activeItemId.value === props.nodeId);
 
@@ -16,7 +23,6 @@ export function useGridState(props: any, emit: any) {
     }));
 
     const PROXIMITY_THRESHOLD = 150;
-
     const isNearActive = computed(() => {
         if (!gridContext.activeItemRect.value || gridContext.activeItemId.value === props.nodeId) {
             return false;
@@ -38,12 +44,20 @@ export function useGridState(props: any, emit: any) {
 
     onMounted(() => {
         position.value = {
-            x: props.freeDrag ? props.x : gridSnap(props.x, gridContext.gridCellSize.value),
-            y: props.freeDrag ? props.y : gridSnap(props.y, gridContext.gridCellSize.value),
+            x: props.freeDrag
+                ? (props.x ?? 0)
+                : gridSnap(props.x ?? 0, gridContext.gridCellSize.value),
+            y: props.freeDrag
+                ? (props.y ?? 0)
+                : gridSnap(props.y ?? 0, gridContext.gridCellSize.value),
         };
         size.value = {
-            w: props.freeDrag ? props.w : gridSnap(props.w, gridContext.gridCellSize.value),
-            h: props.freeDrag ? props.h : gridSnap(props.h, gridContext.gridCellSize.value),
+            w: props.freeDrag
+                ? (props.w ?? 200)
+                : gridSnap(props.w ?? 200, gridContext.gridCellSize.value),
+            h: props.freeDrag
+                ? (props.h ?? 100)
+                : gridSnap(props.h ?? 100, gridContext.gridCellSize.value),
         };
     });
 
