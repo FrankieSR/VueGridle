@@ -1,3 +1,7 @@
+# IMPORTANT NOTICE
+
+- **THIS LIBRARY IS NOT FINISHED YET**
+
 # vueBlocks - Flexible Grid Layout Library for Vue 3
 
 `vueBlocks` is a powerful and flexible grid layout library for Vue 3, designed to create interactive layouts with draggable and resizable items. Built with TypeScript and Composition API, it provides a robust solution for building dynamic dashboards, editors, or any application requiring grid-based interactions.
@@ -390,24 +394,24 @@ Represents an item in the grid with its unique ID and dimensions.
 
 - **Grid Size**: Ensure the `Grid` container has a defined `width` and `height` to avoid unexpected behavior. Example:
 
-                              .grid-container {
-                                width: 800px;
-                                height: 600px;
-                              }
+                                .grid-container {
+                                  width: 800px;
+                                  height: 600px;
+                                }
 
 - **Collision Handling**: Use the `collisionDetected` event to implement custom logic, such as snapping items back or highlighting collisions:
 
-                              const onCollision = (collidingIds: string[]) => {
-                                alert(`Collision with: ${collidingIds.join(', ')}`);
-                              };
+                                const onCollision = (collidingIds: string[]) => {
+                                  alert(`Collision with: ${collidingIds.join(', ')}`);
+                                };
 
 - **Styling**: Customize the appearance using CSS variables defined in your theme:
 
-                              :root {
-                                --grid-cell-size: 50px;
-                                --grid-item-bg-color: #f0f0f0;
-                                --grid-line-color: #ddd;
-                              }
+                                :root {
+                                  --grid-cell-size: 50px;
+                                  --grid-item-bg-color: #f0f0f0;
+                                  --grid-line-color: #ddd;
+                                }
 
 ---
 
