@@ -1,9 +1,9 @@
 {
-  "name": "vueblocks",
+  "name": "@vueblocks/vueblocks",
   "version": "1.0.0",
-  "description": "A lightweight Vue 3 grid system for drag-and-drop and resizing",
-  "main": "dist/my-library.cjs.js",
-  "module": "dist/my-library.esm.js",
+  "description": "Ultra-light Vue 3 grid system for effortless drag, drop, and resize – just 4.7 kB gzip, designed for high-performance layouts.",
+  "main": "dist/vueblocks.cjs.js",
+  "module": "dist/vueblocks.esm.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"

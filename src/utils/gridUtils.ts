@@ -110,12 +110,10 @@ export const checkCollision = (
     nodes: GridNode[],
     freeDrag: boolean,
 ): boolean => {
-    if (nodes.length <= 1) return false;
+    if (!nodes.some((node) => node.id !== nodeId)) return false;
 
     const cacheKey = `${nodeId}:${x},${y},${w},${h}:${freeDrag}`;
     const nodesHash = generateNodesHash(nodes);
-
-    console.log(nodesHash, 'nodesHash');
 
     if (nodesHash !== lastNodesHash) {
         collisionCache.clear();

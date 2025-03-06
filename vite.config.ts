@@ -13,7 +13,7 @@ export default defineConfig({
     build: {
         lib: {
             entry: path.resolve(__dirname, 'src/index.ts'),
-            name: 'VueBlocks',
+            name: '@vueblocks/vueblocks',
             fileName: (format) => `vueblocks.${format}.js`,
         },
         rollupOptions: {

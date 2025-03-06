@@ -29,7 +29,7 @@
                 @drop="(nodeId, x, y) => onDrop(item.id, x, y)"
                 @collision-detected="(collidingIds) => onCollisionDetected(item.id, collidingIds)"
             >
-                <div class="grid-item-content"></div>
+                <div class="grid-item-content">{{ item.id }}</div>
             </GridItem>
         </Grid>
     </div>
