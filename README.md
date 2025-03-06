@@ -73,22 +73,23 @@ The container component that defines the grid layout.
 
 The individual item component within the grid, supporting drag and resize functionality.
 
-| Prop         | Type         | Default  | Description                                   |
-| ------------ | ------------ | -------- | --------------------------------------------- |
-| `x`          | `number`     | 0        | Initial X position of the item.               |
-| `y`          | `number`     | 0        | Initial Y position of the item.               |
-| `w`          | `number`     | 100      | Initial width of the item in pixels.          |
-| `h`          | `number`     | 100      | Initial height of the item in pixels.         |
-| `freeDrag`   | `boolean`    | false    | Allow free movement without snapping to grid. |
-| `resizable`  | `boolean`    | true     | Enable resizing of the item.                  |
-| `draggable`  | `boolean`    | true     | Enable dragging of the item.                  |
-| `nodeId`     | `string`     | ''       | Unique identifier for the item.               |
-| `allNodes`   | `GridNode[]` | []       | Array of all items for collision detection.   |
-| `modelValue` | `Rect`       | Required | Current position and size (`{ x, y, w, h }`). |
-| `minWidth`   | `number`     | 50       | Minimum width of the item in pixels.          |
-| `minHeight`  | `number`     | 50       | Minimum height of the item in pixels.         |
-| `maxWidth`   | `number`     | 500      | Maximum width of the item in pixels.          |
-| `maxHeight`  | `number`     | 500      | Maximum height of the item in pixels.         |
+| Prop         | Type         | Default | Description                                   |
+| ------------ | ------------ | ------- | --------------------------------------------- |
+| `x`          | `number`     | 0       | Initial X position of the item.               |
+| `y`          | `number`     | 0       | Initial Y position of the item.               |
+| `w`          | `number`     | 200     | Initial width of the item in pixels.          |
+| `h`          | `number`     | 100     | Initial height of the item in pixels.         |
+| `z`          | `number`     | 1       | Z-index of the item for layering control.     |
+| `freeDrag`   | `boolean`    | false   | Allow free movement without snapping to grid. |
+| `resizable`  | `boolean`    | true    | Enable resizing of the item.                  |
+| `draggable`  | `boolean`    | true    | Enable dragging of the item.                  |
+| `nodeId`     | `string`     | ''      | Unique identifier for the item.               |
+| `allNodes`   | `GridNode[]` | []      | Array of all items for collision detection.   |
+| `modelValue` | `Rect`       |         | Current position and size (`{ x, y, w, h }`). |
+| `minWidth`   | `number`     | 50      | Minimum width of the item in pixels.          |
+| `minHeight`  | `number`     | 50      | Minimum height of the item in pixels.         |
+| `maxWidth`   | `number`     |         | Maximum width of the item in pixels.          |
+| `maxHeight`  | `number`     |         | Maximum height of the item in pixels.         |
 
 #### Events
 
@@ -235,6 +236,7 @@ Emitted when the item collides with others.
           :y="item.grid.y"
           :w="item.grid.w"
           :h="item.grid.h"
+          :z="item.z"
           :allNodes="items"
           v-model="item.grid"
         >
@@ -248,8 +250,8 @@ Emitted when the item collides with others.
     import { Grid, GridItem } from 'vueBlocks';
 
     const items = ref([
-      { id: 'item-1', grid: { x: 0, y: 0, w: 200, h: 100 } },
-      { id: 'item-2', grid: { x: 250, y: 150, w: 200, h: 100 } },
+      { id: 'item-1', grid: { x: 0, y: 0, w: 200, h: 100 }, z: 1 },
+      { id: 'item-2', grid: { x: 50, y: 50, w: 200, h: 100 }, z: 2 },
     ]);
     </script>
 
@@ -384,6 +386,7 @@ Represents the position and size of a grid item.
     interface GridNode {
       id: string;
       grid: Rect;
+      freeDrag: boolean;
     }
 
 Represents an item in the grid with its unique ID and dimensions.
@@ -394,24 +397,24 @@ Represents an item in the grid with its unique ID and dimensions.
 
 - **Grid Size**: Ensure the `Grid` container has a defined `width` and `height` to avoid unexpected behavior. Example:
 
-                                .grid-container {
-                                  width: 800px;
-                                  height: 600px;
-                                }
+                                                    .grid-container {
+                                                      width: 800px;
+                                                      height: 600px;
+                                                    }
 
 - **Collision Handling**: Use the `collisionDetected` event to implement custom logic, such as snapping items back or highlighting collisions:
 
-                                const onCollision = (collidingIds: string[]) => {
-                                  alert(`Collision with: ${collidingIds.join(', ')}`);
-                                };
+                                                    const onCollision = (collidingIds: string[]) => {
+                                                      alert(`Collision with: ${collidingIds.join(', ')}`);
+                                                    };
 
 - **Styling**: Customize the appearance using CSS variables defined in your theme:
 
-                                :root {
-                                  --grid-cell-size: 50px;
-                                  --grid-item-bg-color: #f0f0f0;
-                                  --grid-line-color: #ddd;
-                                }
+                                                    :root {
+                                                      --grid-cell-size: 50px;
+                                                      --grid-item-bg-color: #f0f0f0;
+                                                      --grid-line-color: #ddd;
+                                                    }
 
 ---
 

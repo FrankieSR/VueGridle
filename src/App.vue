@@ -41,8 +41,8 @@
     import GridItem from './components/GridItem.vue';
 
     const layout = ref([
-        { id: 'item-1', freeDrag: false, grid: { x: 50, y: 50, w: 200, h: 100 } },
-        { id: 'item-2', freeDrag: false, grid: { x: 300, y: 200, w: 200, h: 100 } },
+        { id: 'item-1', grid: { x: 50, y: 50, w: 200, h: 100 } },
+        { id: 'item-2', grid: { x: 300, y: 200, w: 200, h: 100 } },
         { id: 'free drag', freeDrag: true, grid: { x: 300, y: 200, w: 200, h: 100, z: 2 } },
     ]);
 

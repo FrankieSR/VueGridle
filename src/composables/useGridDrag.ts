@@ -73,7 +73,15 @@ export function useGridDrag(
 
         if (
             props.freeDrag ||
-            !checkCollision(props.nodeId, newX, newY, w, h, props.allNodes, props.freeDrag ?? false)
+            !checkCollision(
+                props.nodeId,
+                newX,
+                newY,
+                w,
+                h,
+                props.allNodes,
+                props?.freeDrag ?? false,
+            )
         ) {
             position.value = { x: newX, y: newY };
             if (props.nodeId === gridContext.activeItemId.value) {

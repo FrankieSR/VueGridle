@@ -1,8 +1,8 @@
 import { ref, type Ref } from 'vue';
-import { useGridDrag } from './gridDrag';
-import { useGridResize } from './gridResize';
-import { useGridState } from './gridState';
-import { useGridActivation } from './gridActivation';
+import { useGridDrag } from './useGridDrag';
+import { useGridResize } from './useGridResize';
+import { useGridState } from './useGridState';
+import { useGridActivation } from './useGridActivation';
 import { type GridItemProps, type GridItemEmits } from '@/types/gridTypes';
 
 interface GridState {
@@ -10,7 +10,7 @@ interface GridState {
     size: Ref<{ w: number; h: number }>;
     isActive: Ref<boolean>;
     isNearActive: Ref<boolean>;
-    itemStyle: Ref<{ width: string; height: string; transform: string }>;
+    itemStyle: Ref<{ width: string; height: string; transform: string; zIndex: number }>;
 }
 
 interface GridDrag {
@@ -63,3 +63,5 @@ export function useGridItem(props: GridItemProps, emit: GridItemEmits) {
         resizeHandles,
     };
 }
+
+export { useGridDrag, useGridResize, useGridState, useGridActivation };

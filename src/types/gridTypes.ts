@@ -10,7 +10,8 @@ export interface Rect {
 export interface GridNode {
     id: string;
     grid: Rect;
-    freeDrag: boolean;
+    freeDrag?: boolean | undefined;
+    z?: number;
 }
 
 export interface ContextItem {

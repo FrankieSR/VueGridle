@@ -1,14 +1,9 @@
+import { type GridNode } from '@/types/gridTypes';
 interface Rect {
     x: number;
     y: number;
     w: number;
     h: number;
-}
-
-interface GridNode {
-    id: string;
-    grid: Rect;
-    freeDrag: boolean;
 }
 
 const collisionCache = new Map<string, boolean>();

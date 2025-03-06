@@ -23,6 +23,7 @@ export function useGridResize(
     const startMouse = ref<{ x: number; y: number }>({ x: 0, y: 0 });
     const startSize = ref<{ w: number; h: number }>({ w: 0, h: 0 });
     const startPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 });
+
     const resizeHandles = ['top-left', 'top-right', 'bottom-left', 'bottom-right'] as const;
 
     const directionSet = computed(() => new Set<string>((resizeDirection.value || '').split('-')));
