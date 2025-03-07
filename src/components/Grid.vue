@@ -104,34 +104,3 @@
         activeItem.value = null;
     });
 </script>
-
-<style scoped>
-    .grid-container {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        transition: var(--grid-transition);
-        background-color: var(--grid-bg-color);
-    }
-
-    .grid-active {
-        background: var(--grid-active-bg-color);
-        background-image:
-            linear-gradient(
-                0deg,
-                transparent calc(var(--grid-cell-size) - 2px),
-                var(--grid-line-color) calc(var(--grid-cell-size) - 1px),
-                var(--grid-line-color) var(--grid-cell-size),
-                transparent calc(var(--grid-cell-size) + 1px)
-            ),
-            linear-gradient(
-                90deg,
-                transparent calc(var(--grid-cell-size) - 2px),
-                var(--grid-line-color) calc(var(--grid-cell-size) - 1px),
-                var(--grid-line-color) var(--grid-cell-size),
-                transparent calc(var(--grid-cell-size) + 1px)
-            );
-        background-size: var(--grid-cell-size) var(--grid-cell-size);
-        box-shadow: var(--grid-active-inner-shadow);
-    }
-</style>

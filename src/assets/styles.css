@@ -46,3 +46,104 @@
     --grid-item-active-border-width: 1px;
     --grid-item-active-border-style: solid;
 }
+
+.grid-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: var(--grid-transition);
+    background-color: var(--grid-bg-color);
+}
+
+.grid-active {
+    background: var(--grid-active-bg-color);
+    background-image:
+        linear-gradient(
+            0deg,
+            transparent calc(var(--grid-cell-size) - 2px),
+            var(--grid-line-color) calc(var(--grid-cell-size) - 1px),
+            var(--grid-line-color) var(--grid-cell-size),
+            transparent calc(var(--grid-cell-size) + 1px)
+        ),
+        linear-gradient(
+            90deg,
+            transparent calc(var(--grid-cell-size) - 2px),
+            var(--grid-line-color) calc(var(--grid-cell-size) - 1px),
+            var(--grid-line-color) var(--grid-cell-size),
+            transparent calc(var(--grid-cell-size) + 1px)
+        );
+    background-size: var(--grid-cell-size) var(--grid-cell-size);
+    box-shadow: var(--grid-active-inner-shadow);
+}
+
+.grid-item {
+    position: absolute;
+    box-sizing: border-box;
+    cursor: grab;
+    background-color: var(--grid-item-bg-color);
+    transition: var(--grid-item-transition);
+    will-change: transform, box-shadow;
+    user-select: none;
+}
+
+.grid-item:hover {
+    box-shadow: var(--grid-item-shadow);
+    transform: translateY(var(--grid-item-hover-lift));
+}
+
+.dragging {
+    opacity: var(--grid-item-dragging-opacity);
+    cursor: grabbing;
+    transform: scale(var(--grid-item-dragging-scale));
+    box-shadow: var(--grid-item-dragging-shadow);
+}
+
+.resizing {
+    box-shadow: var(--grid-item-resizing-shadow);
+}
+
+.resize-handle {
+    width: var(--resize-handle-size);
+    height: var(--resize-handle-size);
+    background: var(--resize-handle-bg-color);
+    position: absolute;
+    z-index: 10;
+    border-radius: 50%;
+    opacity: var(--resize-handle-opacity);
+    transition: var(--resize-handle-transition);
+}
+
+.resize-handle:hover {
+    opacity: var(--resize-handle-hover-opacity);
+    transform: scale(var(--resize-handle-hover-scale));
+}
+
+.top-left {
+    top: var(--resize-handle-offset);
+    left: var(--resize-handle-offset);
+    cursor: nwse-resize;
+}
+.top-right {
+    top: var(--resize-handle-offset);
+    right: var(--resize-handle-offset);
+    cursor: nesw-resize;
+}
+.bottom-left {
+    bottom: var(--resize-handle-offset);
+    left: var(--resize-handle-offset);
+    cursor: nesw-resize;
+}
+.bottom-right {
+    bottom: var(--resize-handle-offset);
+    right: var(--resize-handle-offset);
+    cursor: nwse-resize;
+}
+
+.grid-item.highlight {
+    border: 3px solid var(--grid-item-border-color);
+}
+
+.grid-item.active {
+    border: 1px solid var(--grid-item-border-color);
+    box-shadow: var(--grid-item-active-shadow);
+}
