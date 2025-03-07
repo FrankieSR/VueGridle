@@ -59,10 +59,10 @@ export function useGridResize(
         const { clientX, clientY } = getClientCoordinates(event);
 
         const newRect = {
-            x: startPosition.value.x,
-            y: startPosition.value.y,
-            w: startSize.value.w,
-            h: startSize.value.h,
+            x: position.value.x,
+            y: position.value.y,
+            w: size.value.w,
+            h: size.value.h,
         };
 
         const deltaX = clientX - startMouse.value.x;
@@ -80,24 +80,24 @@ export function useGridResize(
                 : gridMaxHeight;
 
         const directions = directionSet.value;
-        if (directions.size > 0) {
-            if (directions.has('right')) {
-                newRect.w = clamp(newRect.w + deltaX, minWidth, maxWidth);
-            }
-            if (directions.has('left')) {
-                const rightEdge = startPosition.value.x + startSize.value.w;
-                newRect.x = clamp(startPosition.value.x + deltaX, 0, rightEdge - minWidth);
-                newRect.w = clamp(rightEdge - newRect.x, minWidth, maxWidth);
-            }
-            if (directions.has('bottom')) {
-                newRect.h = clamp(newRect.h + deltaY, minHeight, maxHeight);
-            }
-            if (directions.has('top')) {
-                const bottomEdge = startPosition.value.y + startSize.value.h;
-                const potentialHeight = bottomEdge - (startPosition.value.y + deltaY);
-                newRect.h = clamp(potentialHeight, minHeight, maxHeight);
-                newRect.y = bottomEdge - newRect.h;
-            }
+
+        if (directions.has('right')) {
+            newRect.w = clamp(startSize.value.w + deltaX, minWidth, maxWidth);
+        }
+        if (directions.has('left')) {
+            const rightEdge = startPosition.value.x + startSize.value.w;
+
+            newRect.x = clamp(startPosition.value.x + deltaX, 0, rightEdge - minWidth);
+            newRect.w = clamp(rightEdge - newRect.x, minWidth, maxWidth);
+        }
+        if (directions.has('bottom')) {
+            newRect.h = clamp(startSize.value.h + deltaY, minHeight, maxHeight);
+        }
+        if (directions.has('top')) {
+            const bottomEdge = startPosition.value.y + startSize.value.h;
+
+            newRect.y = clamp(startPosition.value.y + deltaY, 0, bottomEdge - minHeight);
+            newRect.h = clamp(bottomEdge - newRect.y, minHeight, maxHeight);
         }
 
         const snappedRect = {
