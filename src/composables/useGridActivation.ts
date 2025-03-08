@@ -1,5 +1,10 @@
-import { inject, onMounted, onUnmounted, type Ref } from 'vue';
-import { type GridItemProps, type GridItemEmits, type GridContext } from '@/types/gridTypes';
+import { inject, onMounted, onUnmounted, watch, type Ref } from 'vue';
+import {
+    type GridItemProps,
+    type GridItemEmits,
+    type GridContext,
+    type GridActivation,
+} from '@/types/gridTypes';
 
 export function useGridActivation(
     props: GridItemProps,
@@ -7,49 +12,49 @@ export function useGridActivation(
     item: Ref<HTMLElement | null>,
     isDragging: Ref<boolean>,
     isResizing: Ref<boolean>,
-) {
+    options: {
+        position?: Ref<{ x: number; y: number }>;
+        size?: Ref<{ w: number; h: number }>;
+        onMouseMove?: (event: MouseEvent | TouchEvent) => void;
+        onMouseUp?: () => void;
+    } = {},
+): GridActivation {
     const gridContext = inject<GridContext>('gridContext')!;
+    const { position, size, onMouseMove, onMouseUp } = options;
 
     const setActiveItem = () => {
+        const rect = {
+            x: position?.value.x ?? props.x ?? 0,
+            y: position?.value.y ?? props.y ?? 0,
+            w: size?.value.w ?? props.w ?? 200,
+            h: size?.value.h ?? props.h ?? 100,
+        };
+
         gridContext.setActiveItem({
-            onMouseMove: () => {},
-            onMouseUp: () => {},
+            onMouseMove: onMouseMove ?? (() => {}),
+            onMouseUp: onMouseUp ?? (() => {}),
             id: props.nodeId,
-            rect: {
-                x: props.x ?? 0,
-                y: props.y ?? 0,
-                w: props.w ?? 200,
-                h: props.h ?? 100,
-            },
+            rect,
         });
     };
 
-    const activateItem = () => {
+    const activate = () => {
         if (isDragging.value || isResizing.value) return;
-
         setActiveItem();
-
         emit('itemActivated', props.nodeId);
     };
 
-    const handleOutsideClick = (event: MouseEvent) => {
-        if (!item || !item.value || item.value.contains(event.target as Node)) return;
-        if (gridContext.activeItemId.value === props.nodeId) {
-            gridContext.clearActiveItem();
-
-            emit('itemDeactivated', props.nodeId);
-        }
-    };
-
-    onMounted(() => {
-        document.addEventListener('click', handleOutsideClick);
-    });
-
-    onUnmounted(() => {
-        document.removeEventListener('click', handleOutsideClick);
-    });
+    watch(
+        () => gridContext.activeItemId.value,
+        (newActiveId, oldActiveId) => {
+            if (oldActiveId === props.nodeId && newActiveId !== props.nodeId) {
+                emit('itemDeactivated', props.nodeId);
+            }
+        },
+        { flush: 'post' },
+    );
 
     return {
-        activateItem,
+        activate,
     };
 }

@@ -3,52 +3,26 @@ import { useGridDrag } from './useGridDrag';
 import { useGridResize } from './useGridResize';
 import { useGridState } from './useGridState';
 import { useGridActivation } from './useGridActivation';
-import { type GridItemProps, type GridItemEmits } from '@/types/gridTypes';
+import {
+    type GridItemProps,
+    type GridItemEmits,
+    type GridState,
+    type GridDrag,
+    type GridResize,
+    type GridActivation,
+    type GridItemReturn,
+} from '@/types/gridTypes';
 
-interface GridState {
-    position: Ref<{ x: number; y: number }>;
-    size: Ref<{ w: number; h: number }>;
-    isActive: Ref<boolean>;
-    isNearActive: Ref<boolean>;
-    itemStyle: Ref<{ width: string; height: string; transform: string; zIndex: number }>;
-}
-
-interface GridDrag {
-    isDragging: Ref<boolean>;
-    startDrag: (event: MouseEvent | TouchEvent) => void;
-}
-
-interface GridResize {
-    isResizing: Ref<boolean>;
-    startResize: (direction: string, event: MouseEvent | TouchEvent) => void;
-    resizeHandles: readonly ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
-}
-
-interface GridActivation {
-    activateItem: () => void;
-}
-
-export function useGridItem(props: GridItemProps, emit: GridItemEmits) {
+export function useGridItem(props: GridItemProps, emit: GridItemEmits): GridItemReturn {
     const item = ref<HTMLElement | null>(null);
 
-    const { position, size, isActive, isNearActive, itemStyle }: GridState = useGridState(
-        props,
-        emit,
-    );
+    const { position, size, isActive, isNearActive, itemStyle }: GridState = useGridState(props, emit);
     const { isDragging, startDrag }: GridDrag = useGridDrag(props, position, emit);
-    const { isResizing, startResize, resizeHandles }: GridResize = useGridResize(
-        props,
+    const { isResizing, startResize, resizeHandles }: GridResize = useGridResize(props, position, size, emit);
+    const { activate }: GridActivation = useGridActivation(props, emit, item, isDragging, isResizing, {
         position,
         size,
-        emit,
-    );
-    const { activateItem }: GridActivation = useGridActivation(
-        props,
-        emit,
-        item,
-        isDragging,
-        isResizing,
-    );
+    });
 
     return {
         item,
@@ -59,7 +33,7 @@ export function useGridItem(props: GridItemProps, emit: GridItemEmits) {
         itemStyle,
         startDrag,
         startResize,
-        activateItem,
+        activate,
         resizeHandles,
     };
 }

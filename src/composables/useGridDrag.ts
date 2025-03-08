@@ -7,16 +7,20 @@ import {
     type GridItemEmits,
     type GridContext,
     type GridNode,
+    type GridDrag,
 } from '@/types/gridTypes';
 
 export function useGridDrag(
     props: GridItemProps,
     position: Ref<{ x: number; y: number }>,
     emit: GridItemEmits,
-) {
+): GridDrag {
+    const DRAG_THRESHOLD = 5;
+    const DEFAULT_SIZE = 50;
     const gridContext = inject<GridContext>('gridContext')!;
 
     const isDragging = ref(false);
+    const dragInitiated = ref(false);
     const startMouse = ref<{ x: number; y: number }>({ x: 0, y: 0 });
     const startPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 });
 
@@ -25,22 +29,14 @@ export function useGridDrag(
 
     const startDrag = (event: MouseEvent | TouchEvent) => {
         if (!props.draggable) return;
-        isDragging.value = true;
-        gridContext.isManipulating.value = true;
 
         const { clientX, clientY } = getClientCoordinates(event);
         startMouse.value = { x: clientX, y: clientY };
         startPosition.value = { ...position.value };
 
-        gridContext.setActiveItem({
-            onMouseMove,
-            onMouseUp: stopDrag,
-            id: props.nodeId,
-            rect: { ...position.value, w: props.w ?? 200, h: props.h ?? 100 },
-        });
+        isDragging.value = true;
 
         addGlobalListeners(onMouseMove, stopDrag);
-        emit('dragStart');
     };
 
     const updateDrag = (event: MouseEvent | TouchEvent) => {
@@ -50,8 +46,23 @@ export function useGridDrag(
         const deltaX = clientX - startMouse.value.x;
         const deltaY = clientY - startMouse.value.y;
 
-        const w = props.w ?? 200;
-        const h = props.h ?? 100;
+        if (!dragInitiated.value && Math.sqrt(deltaX * deltaX + deltaY * deltaY) > DRAG_THRESHOLD) {
+            gridContext.isManipulating.value = true;
+            dragInitiated.value = true;
+
+            gridContext.setActiveItem({
+                onMouseMove,
+                onMouseUp: stopDrag,
+                id: props.nodeId,
+                rect: { ...position.value, w: props.w ?? DEFAULT_SIZE, h: props.h ?? DEFAULT_SIZE },
+            });
+            emit('dragStart');
+        }
+
+        if (!dragInitiated.value) return;
+
+        const w = props.w ?? DEFAULT_SIZE;
+        const h = props.h ?? DEFAULT_SIZE;
         let newX = clamp(startPosition.value.x + deltaX, 0, gridContext.gridWidth.value - w);
         let newY = clamp(startPosition.value.y + deltaY, 0, gridContext.gridHeight.value - h);
 
@@ -73,24 +84,11 @@ export function useGridDrag(
 
         if (
             props.freeDrag ||
-            !checkCollision(
-                props.nodeId,
-                newX,
-                newY,
-                w,
-                h,
-                props.allNodes,
-                props?.freeDrag ?? false,
-            )
+            !checkCollision(props.nodeId, newX, newY, w, h, props.allNodes, props.freeDrag ?? false)
         ) {
             position.value = { x: newX, y: newY };
             if (props.nodeId === gridContext.activeItemId.value) {
-                gridContext.updateActiveItemRect({
-                    x: newX,
-                    y: newY,
-                    w: w,
-                    h: h,
-                });
+                gridContext.updateActiveItemRect({ x: newX, y: newY, w, h });
             }
             emit('drag', newX, newY);
         }
@@ -98,7 +96,6 @@ export function useGridDrag(
 
     const onMouseMove = (event: MouseEvent | TouchEvent) => {
         latestEvent = event;
-
         if (rafId === null && isDragging.value) {
             rafId = requestAnimationFrame(() => {
                 if (latestEvent) {
@@ -122,20 +119,21 @@ export function useGridDrag(
         }
 
         latestEvent = null;
-
         removeGlobalListeners(onMouseMove, stopDrag);
         gridContext.clearActiveItem();
 
-        emit('dragStop', position.value.x, position.value.y);
+        if (dragInitiated.value) {
+            emit('dragStop', position.value.x, position.value.y);
+            emit('update:modelValue', {
+                x: position.value.x,
+                y: position.value.y,
+                w: props.w ?? DEFAULT_SIZE,
+                h: props.h ?? DEFAULT_SIZE,
+            });
+            emit('drop', props.nodeId, position.value.x, position.value.y);
+        }
 
-        emit('update:modelValue', {
-            x: position.value.x,
-            y: position.value.y,
-            w: props.w ?? 200,
-            h: props.h ?? 100,
-        });
-
-        emit('drop', props.nodeId, position.value.x, position.value.y);
+        dragInitiated.value = false;
     };
 
     return {

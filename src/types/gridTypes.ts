@@ -1,4 +1,4 @@
-import { type Ref } from 'vue';
+import { type Ref, type ComputedRef } from 'vue';
 
 export interface Rect {
     x: number;
@@ -39,6 +39,8 @@ export interface GridItemProps {
     y?: number;
     w?: number;
     h?: number;
+    z?: number;
+    proximity?: number;
     freeDrag?: boolean;
     resizable?: boolean;
     draggable?: boolean;
@@ -49,7 +51,6 @@ export interface GridItemProps {
     minHeight?: number;
     maxWidth?: number;
     maxHeight?: number;
-    z?: number;
 }
 
 export interface GridItemEmits {
@@ -65,3 +66,39 @@ export interface GridItemEmits {
     (e: 'drop', nodeId: string, x: number, y: number): void;
     (e: 'collisionDetected', collidingIds: string[]): void;
 }
+
+export interface GridState {
+    position: Ref<{ x: number; y: number }>;
+    size: Ref<{ w: number; h: number }>;
+    isActive: ComputedRef<boolean>;
+    isNearActive: ComputedRef<boolean>;
+    itemStyle: ComputedRef<{ width: string; height: string; transform: string; zIndex: number }>;
+}
+
+export interface GridDrag {
+    isDragging: Ref<boolean>;
+    startDrag: (event: MouseEvent | TouchEvent) => void;
+}
+
+export interface GridResize {
+    isResizing: Ref<boolean>;
+    startResize: (direction: string, event: MouseEvent | TouchEvent) => void;
+    resizeHandles: readonly ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
+}
+
+export interface GridActivation {
+    activate: () => void;
+}
+
+export type GridItemReturn = {
+    item: Ref<HTMLElement | null>;
+    isDragging: Ref<boolean>;
+    isResizing: Ref<boolean>;
+    isActive: ComputedRef<boolean>;
+    isNearActive: ComputedRef<boolean>;
+    itemStyle: ComputedRef<{ width: string; height: string; transform: string; zIndex: number }>;
+    startDrag: (event: MouseEvent | TouchEvent) => void;
+    startResize: (direction: string, event: MouseEvent | TouchEvent) => void;
+    activate: () => void;
+    resizeHandles: readonly ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
+};

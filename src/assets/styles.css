@@ -26,9 +26,9 @@
     --resize-handle-size: 12px;
     --resize-handle-offset: -6px;
 
-    --grid-transition: all 0.2s ease-in-out;
-    --grid-item-transition: all 0.18s ease;
-    --resize-handle-transition: all 0.22s ease-out;
+    --grid-transition: all 0.1s ease-in-out;
+    --grid-item-transition: all 0.1s ease;
+    --resize-handle-transition: all 0.1s ease-out;
 
     --grid-item-dragging-opacity: 0.98;
     --resize-handle-opacity: 0.6;

@@ -11,7 +11,7 @@
         :style="itemStyle"
         @mousedown="startDrag"
         @touchstart="startDrag"
-        @click="activateItem"
+        @click="activate"
         @contextmenu.prevent
         @dragstart.prevent
     >
@@ -59,7 +59,7 @@
         itemStyle,
         startDrag,
         startResize,
-        activateItem,
+        activate,
         resizeHandles,
     } = useGridItem(props, emit);
 </script>

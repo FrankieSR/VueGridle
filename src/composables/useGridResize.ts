@@ -7,6 +7,7 @@ import {
     type GridItemEmits,
     type GridContext,
     type GridNode,
+    type GridResize,
 } from '@/types/gridTypes';
 
 export function useGridResize(
@@ -14,7 +15,7 @@ export function useGridResize(
     position: Ref<{ x: number; y: number }>,
     size: Ref<{ w: number; h: number }>,
     emit: GridItemEmits,
-) {
+): GridResize {
     const DEFAULT_MIN_SIZE = 50;
     const gridContext = inject<GridContext>('gridContext')!;
 
@@ -33,11 +34,13 @@ export function useGridResize(
 
     const startResize = (direction: string, event: MouseEvent | TouchEvent) => {
         if (!props.resizable) return;
+
         isResizing.value = true;
         gridContext.isManipulating.value = true;
         resizeDirection.value = direction;
 
         const { clientX, clientY } = getClientCoordinates(event);
+
         startMouse.value = { x: clientX, y: clientY };
         startSize.value = { ...size.value };
         startPosition.value = { ...position.value };
@@ -57,7 +60,6 @@ export function useGridResize(
         if (!isResizing.value) return;
 
         const { clientX, clientY } = getClientCoordinates(event);
-
         const newRect = {
             x: position.value.x,
             y: position.value.y,
@@ -86,7 +88,6 @@ export function useGridResize(
         }
         if (directions.has('left')) {
             const rightEdge = startPosition.value.x + startSize.value.w;
-
             newRect.x = clamp(startPosition.value.x + deltaX, 0, rightEdge - minWidth);
             newRect.w = clamp(rightEdge - newRect.x, minWidth, maxWidth);
         }
@@ -95,7 +96,6 @@ export function useGridResize(
         }
         if (directions.has('top')) {
             const bottomEdge = startPosition.value.y + startSize.value.h;
-
             newRect.y = clamp(startPosition.value.y + deltaY, 0, bottomEdge - minHeight);
             newRect.h = clamp(bottomEdge - newRect.y, minHeight, maxHeight);
         }
@@ -128,7 +128,6 @@ export function useGridResize(
                 }
                 return ids;
             }, []);
-
             emit('collisionDetected', collidingIds);
         }
 
@@ -144,14 +143,12 @@ export function useGridResize(
                     h: snappedRect.h,
                 });
             }
-
             emit('resize', snappedRect.x, snappedRect.y, snappedRect.w, snappedRect.h);
         }
     };
 
     const onMouseMove = (event: MouseEvent | TouchEvent) => {
         latestEvent = event;
-
         if (rafId === null && isResizing.value) {
             rafId = requestAnimationFrame(() => {
                 if (latestEvent) {
@@ -165,8 +162,10 @@ export function useGridResize(
 
     const stopResize = () => {
         if (!isResizing.value) return;
+
         isResizing.value = false;
         gridContext.isManipulating.value = false;
+
         if (rafId !== null) {
             cancelAnimationFrame(rafId);
             rafId = null;
@@ -174,6 +173,7 @@ export function useGridResize(
         latestEvent = null;
         removeGlobalListeners(onMouseMove, stopResize);
         gridContext.clearActiveItem();
+
         emit('resizeStop', position.value.x, position.value.y, size.value.w, size.value.h);
         emit('update:modelValue', {
             x: position.value.x,
