@@ -1,8 +1,8 @@
 <template>
     <div
         ref="gridContainer"
-        class="grid-container"
-        :class="{ 'grid-active': isManipulating }"
+        class="vueblocks-grid-container"
+        :class="{ 'vueblocks-grid-active': isManipulating }"
         :style="{ '--grid-cell-size': `${gridCellSize}px` }"
         @dragover.prevent
         @mousemove="handlePointerMove"

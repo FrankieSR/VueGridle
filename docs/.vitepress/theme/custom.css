@@ -1,0 +1,135 @@
+:root {
+    --grid-item-border-color: #f24b69;
+    /* --vt-c-black: #1a1a1a; */
+    --vp-c-brand-1: #6ee7b7;
+    --vp-button-brand-bg: #f24b69;
+    /* --vp-c-text-2: #054072; */
+    --resize-handle-bg-color: #6ee7b7;
+    --resize-handle-opacity: 1;
+    --grid-line-color: var(--vp-c-border);
+}
+
+.vp-doc.container {
+    flex-basis: 400px;
+    padding-bottom: 32px;
+}
+
+.VPHero .image-bg {
+    background-image: linear-gradient(
+        -45deg,
+        var(--vp-c-brand-1) 50%,
+        var(--vp-button-brand-bg) 50%
+    );
+    filter: blur(68px);
+}
+
+.VPImage.image-src {
+    max-width: 200px;
+}
+
+.heading .name {
+    color: #f24b69 !important;
+    -webkit-text-fill-color: #f24b69;
+}
+
+.title {
+    font-size: 1.4rem !important;
+}
+
+h2 {
+    font-size: 1rem !important;
+}
+
+.app-container {
+    position: relative;
+    display: inline-block;
+    border-radius: 8px;
+    z-index: 10;
+    width: 100%;
+}
+
+.main-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
+}
+
+.grid-demo {
+    width: 500px;
+    height: 500px;
+    background-color: var(--vp-c-bg-soft);
+    transition:
+        border-color 0.25s,
+        background-color 0.25s;
+    position: relative;
+}
+
+.grid-item-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1rem;
+    color: rgb(60, 60, 67);
+    background: var(--vp-c-brand-1);
+}
+
+.console-panel {
+    width: 350px;
+    height: 500px;
+    background-color: var(--vp-c-bg-soft);
+    transition:
+        border-color 0.25s,
+        background-color 0.25s;
+    border: 1px solid var(--vp-c-bg-soft);
+    color: var(--vp-c-text-1);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.console-header {
+    background-color: var(--vp-c-default-soft);
+    color: #333;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    border: 1px solid var(--vp-c-bg-soft);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.console-body {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 1rem;
+    color: inherit;
+}
+
+.console-line {
+    padding: 4px 0;
+    word-wrap: break-word;
+}
+
+.console-warning {
+    color: var(--resize-handle-bg-color);
+}
+
+.clear-btn {
+    background: var(--grid-item-border-color);
+    color: #fff;
+    font-weight: 700;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}

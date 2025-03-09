@@ -2,7 +2,7 @@
   "name": "@vueblocks/vueblocks",
   "version": "1.0.0",
   "type": "module",
-  "description": "Ultra-light Vue 3 grid system for effortless drag, drop, and resize – just 4.7 kB gzip, designed for high-performance layouts.",
+  "description": "Ultra-light (4.7kB gzip) grid library for Vue 3, powered by TypeScript & Composition API",
   "main": "dist/vueblocks.cjs.js",
   "module": "dist/vueblocks.es.js",
   "types": "dist/index.d.ts",

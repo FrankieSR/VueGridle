@@ -1,12 +1,12 @@
 <template>
     <div
         ref="item"
-        class="grid-item"
+        class="vueblocks-grid-item"
         :class="{
-            active: isActive,
-            dragging: isDragging,
-            resizing: isResizing,
-            highlight: isNearActive,
+            'vueblocks-active': isActive,
+            'vueblocks-dragging': isDragging,
+            'vueblocks-resizing': isResizing,
+            'vueblocks-highlight': isNearActive,
         }"
         :style="itemStyle"
         @mousedown="startDrag"
