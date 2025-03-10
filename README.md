@@ -1,6 +1,6 @@
-# vueBlocks 🚀 - Vue 3 Grid System
+# VuegGridle 🚀 - Vue 3 Grid System
 
-`vueBlocks` is an ultra-light (~4.7 kB gzip) and flexible grid library for Vue 3.  
+`VueGridle` is an ultra-light (~4.7 kB gzip) and flexible grid library for Vue 3.  
 Built with TypeScript and Composition API for smooth, dynamic layouts.
 
 ---
@@ -24,25 +24,25 @@ Built with TypeScript and Composition API for smooth, dynamic layouts.
 
 ### Via npm
 ```bash
-npm install @vueblocks/vueblocks
+npm install vuegridle
 ```
 
 ### Via Yarn
 ```bash
-yarn add @vueblocks/vueblocks
+yarn add vuegridle
 ```
 
 ---
 
 ## Quick Start
 
-Add `vueBlocks` to your Vue 3 app:
+Add `VueGridle` to your Vue 3 app:
 
 ```ts
 // main.ts
 import { createApp } from 'vue';
 import App from './App.vue';
-import { Grid, GridItem } from '@vueblocks/vueblocks';
+import { Grid, GridItem } from 'vuegridle';
 
 const app = createApp(App);
 app.component('Grid', Grid);
@@ -81,7 +81,7 @@ Now you can use `<Grid>` and `<GridItem>` in your templates.
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Grid, GridItem } from '@vueblocks/vueblocks';
+import { Grid, GridItem } from 'vuegridle';
 
 const layout = ref([
   { id: 'item-1', grid: { x: 0, y: 0, w: 200, h: 100 } },
@@ -139,9 +139,9 @@ For a deeper dive (including advanced collision handling, dynamic layouts, styli
 
 ## License
 
-`vueBlocks` is released under the [MIT License](./LICENSE).
+`VueGridle` is released under the [MIT License](./LICENSE).
 
 ---
 
-**Enjoy building dynamic, interactive grids with `vueBlocks`!**  
+**Enjoy building dynamic, interactive grids with `VueGridle`!**  
 Contributions & feedback welcome.

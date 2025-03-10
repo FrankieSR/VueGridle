@@ -62,7 +62,7 @@ All styles are driven by global CSS variables defined in the `:root` scope. Thes
 
 The following CSS classes are applied to the `Grid` and `GridItem` components to define their appearance and behavior.
 
-### `.vueblocks-grid-container`
+### `.vuegridle-grid-container`
 
 - **Description**: The main container for the grid, providing the layout context.
 - **Styles**:
@@ -71,7 +71,7 @@ The following CSS classes are applied to the `Grid` and `GridItem` components to
     - `background-color: var(--grid-bg-color)`: Sets the default background.
     - `transition: var(--grid-transition)`: Smooth transitions for background changes.
 
-### `.vueblocks-grid-active`
+### `.vuegridle-grid-active`
 
 - **Description**: Applied to the grid container when it’s in an active state (e.g., during dragging or resizing).
 - **Styles**:
@@ -79,7 +79,7 @@ The following CSS classes are applied to the `Grid` and `GridItem` components to
     - `background-image`: Adds a grid pattern using linear gradients based on `--grid-cell-size`.
     - `box-shadow: var(--grid-active-inner-shadow)`: Adds an inner shadow for depth.
 
-### `.vueblocks-grid-item`
+### `.vuegridle-grid-item`
 
 - **Description**: The base class for each grid item.
 - **Styles**:
@@ -89,14 +89,14 @@ The following CSS classes are applied to the `Grid` and `GridItem` components to
     - `transition: var(--grid-item-transition)`: Smooth transitions for transforms and shadows.
     - `user-select: none`: Prevents text selection during interaction.
 
-### `.vueblocks-grid-item:hover`
+### `.vuegridle-grid-item:hover`
 
 - **Description**: Applied when hovering over a grid item.
 - **Styles**:
     - `box-shadow: var(--grid-item-shadow)`: Adds a subtle shadow.
     - `transform: translateY(var(--grid-item-hover-lift))`: Lifts the item slightly.
 
-### `.vueblocks-dragging`
+### `.vuegridle-dragging`
 
 - **Description**: Applied to a grid item while it’s being dragged.
 - **Styles**:
@@ -105,7 +105,7 @@ The following CSS classes are applied to the `Grid` and `GridItem` components to
     - `transform: scale(var(--grid-item-dragging-scale))`: Slightly enlarges the item.
     - `box-shadow: var(--grid-item-dragging-shadow)`: Adds a distinct shadow.
 
-### `.vueblocks-resizing`
+### `.vuegridle-resizing`
 
 - **Description**: Applied to a grid item while it’s being resized.
 - **Styles**:
@@ -137,13 +137,13 @@ The following CSS classes are applied to the `Grid` and `GridItem` components to
     - Positioned using `top`, `right`, `bottom`, `left` with `--resize-handle-offset`.
     - `cursor`: Set to appropriate resize directions (`nwse-resize`, `nesw-resize`).
 
-### `.vueblocks-grid-item.vueblocks-highlight`
+### `.vuegridle-grid-item.vuegridle-highlight`
 
 - **Description**: Applied to highlight a grid item (e.g., when near another item).
 - **Styles**:
     - `border: var(--grid-item-highlight-border-width) var(--grid-item-highlight-border-style) var(--grid-item-border-color)`: Adds a dashed border.
 
-### `.vueblocks-grid-item.vueblocks-active`
+### `.vuegridle-grid-item.vuegridle-active`
 
 - **Description**: Applied to the currently active grid item.
 - **Styles**:

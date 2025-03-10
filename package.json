@@ -1,16 +1,28 @@
 {
-  "name": "@vueblocks/vueblocks",
+  "name": "vuegridle",
   "version": "1.0.0",
   "type": "module",
   "description": "Ultra-light (4.7kB gzip) grid library for Vue 3, powered by TypeScript & Composition API",
-  "main": "dist/vueblocks.cjs.js",
-  "module": "dist/vueblocks.es.js",
+  "keywords": [
+    "vue",
+    "vue3",
+    "grid",
+    "draggable",
+    "resizable",
+    "typescript",
+    "composition-api",
+    "lightweight"
+  ],
+  "author": "Artem Doroshko <artemdoroshko555@gmail.com>",
+  "license": "MIT",
+  "main": "dist/vuegridle.cjs.js",
+  "module": "dist/vuegridle.es.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/vueblocks.es.js",
-      "require": "./dist/vueblocks.cjs.js"
+      "import": "./dist/vuegridle.es.js",
+      "require": "./dist/vuegridle.cjs.js"
     }
   },
   "files": [
@@ -24,7 +36,8 @@
     "format": "prettier --write src/",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "docs:preview": "vitepress preview docs",
+    "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
     "vue": "^3.0.0"
@@ -41,5 +54,9 @@
   },
   "dependencies": {
     "tslib": "^2.8.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FrankieSR/VueGridle.git"
   }
 }

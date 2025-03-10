@@ -1,6 +1,5 @@
 <template>
     <div class="app-container">
-        <h1 class="title">VueBlocks</h1>
         <Grid :gridCellSize="50" class="grid-demo">
             <GridItem
                 v-for="item in layout"
@@ -10,6 +9,7 @@
                 :y="item.grid.y"
                 :w="item.grid.w"
                 :h="item.grid.h"
+                :proximity="100"
                 :allNodes="layout"
                 :draggable="true"
                 :resizable="true"
@@ -29,7 +29,9 @@
                 @drop="(nodeId, x, y) => onDrop(item.id, x, y)"
                 @collision-detected="(collidingIds) => onCollisionDetected(item.id, collidingIds)"
             >
-                <div class="grid-item-content">{{ item.id }}</div>
+                <div class="grid-item-content">{{ item.label }}
+                    <button @click="clicked">Click me</button>
+                </div>
             </GridItem>
         </Grid>
     </div>
@@ -41,9 +43,9 @@
     import GridItem from './components/GridItem.vue';
 
     const layout = ref([
-        { id: 'item-1', grid: { x: 50, y: 50, w: 200, h: 100 } },
-        { id: 'item-2', grid: { x: 300, y: 200, w: 200, h: 100 } },
-        { id: 'free drag', freeDrag: true, grid: { x: 300, y: 200, w: 200, h: 100, z: 2 } },
+        { id: 'item-1', label: 'Item 1' ,grid: { x: 50, y: 50, w: 200, h: 100 } },
+        { id: 'item-2', label: 'Item 2', grid: { x: 300, y: 200, w: 200, h: 100 } },
+        { id: 'free-drag', label: 'Free Drag', freeDrag: true, grid: { x: 300, y: 200, w: 200, h: 100, z: 2 } },
     ]);
 
     const onDragStart = (nodeId: string) => {
@@ -53,6 +55,10 @@
     const onDrag = (nodeId: string, x: number, y: number) => {
         console.log(`[${nodeId}] Dragging to x: ${x}, y: ${y}`);
     };
+
+    const clicked = () => {
+        console.log("CLICKED");
+    }
 
     const onDragStop = (nodeId: string, x: number, y: number) => {
         console.log(`[${nodeId}] Drag stopped at x: ${x}, y: ${y}`);
@@ -104,19 +110,12 @@
         padding: 20px;
         min-height: 100vh;
         background: var(--grid-bg-color);
-        background-image: radial-gradient(circle, rgba(96, 165, 250, 0.2) 1px, transparent 1px);
         background-size: 40px 40px;
     }
 
-    .title {
-        font-size: 24px;
-        margin-bottom: 20px;
-        color: #fff;
-    }
-
     .grid-demo {
-        width: 800px;
-        height: 800px;
+        width: 500px;
+        height: 500px;
         border: 1px solid var(--grid-item-border-color);
         position: relative;
     }
@@ -124,13 +123,14 @@
     .grid-item-content {
         width: 100%;
         height: 100%;
+        font-family: 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(96, 165, 250, 0.1);
-        color: #fff;
-        font-weight: bold;
-        border-radius: 6px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 6px;      
+        font-size: 24px;
+  background: -webkit-linear-gradient(#eee, #333);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
     }
 </style>

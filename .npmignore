@@ -1,0 +1,11 @@
+src/
+docs/
+*.ts
+*.vue
+*.md
+vite.config.*
+tsconfig.json
+.eslintrc
+.prettierrc
+*.log
+node_modules/

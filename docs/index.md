@@ -2,10 +2,10 @@
 layout: home
 
 hero:
-  name: 'VueBlocks'
+  name: 'VueGridle'
   image:
     src: ./.vitepress/public/logo.png
-    alt: VueBlocks
+    alt: VueGridle
   tagline: "Ultra-light (4.7kB gzip) grid library for Vue 3, powered by TypeScript & Composition API."
   actions:
     - theme: brand
@@ -13,7 +13,7 @@ hero:
       link: /guide/getting-started
     - theme: alt
       text: 'View on GitHub'
-      link: 'https://github.com/FrankieSR/VueBlocks'
+      link: 'https://github.com/FrankieSR/VueGridle'
 
 features:
   - icon: 🖱️

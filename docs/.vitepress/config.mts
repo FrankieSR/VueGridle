@@ -3,8 +3,8 @@ import { SearchPlugin } from 'vitepress-plugin-search';
 
 export default defineConfig({
   lang: 'en-US',
-  title: "VueBlocks",
-  description: "vueBlocks is an ultra-light (just 4.7 kB gzip) and flexible grid library for Vue 3. Built with TypeScript and  Composition API for smooth, dynamic layouts.",
+  title: "VueGridle",
+  description: "VueGridle is an ultra-light (just 4.7 kB gzip) and flexible grid library for Vue 3. Built with TypeScript and  Composition API for smooth, dynamic layouts.",
   vite: {
     plugins: [
       SearchPlugin({
@@ -44,7 +44,7 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/FrankieSR/VueBlocks' }
+      { icon: 'github', link: 'https://github.com/FrankieSR/VueGridle' }
     ],
 
     footer: {

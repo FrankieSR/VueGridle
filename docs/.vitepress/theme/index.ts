@@ -1,6 +1,6 @@
 import DefaultTheme from 'vitepress/theme';
 import type { Theme } from 'vitepress';
-import { Grid, GridItem } from '../../../dist/vueblocks.es';
+import { Grid, GridItem } from '../../../dist/vuegridle.es';
 import SimpleGrid from '../components/SimpleGrid.vue';
 import Example01Basic from '../components/Example01Basic.vue';
 import Example02DraggableResizeble from '../components/Example02DraggableResizeble.vue';
@@ -8,7 +8,7 @@ import Example03AddRemove from '../components/Example03AddRemove.vue';
 import Example04DragOutside from '../components/Example04DragOutside.vue';
 import Example05CollisionHandling from '../components/Example05CollisionHandling.vue';
 
-import '../../../dist/vueblocks.css';
+import '../../../dist/vuegridle.css';
 import './custom.css';
 
 const theme: Theme = {

@@ -40,6 +40,7 @@ export function useGridActivation(
 
     const activate = () => {
         if (isDragging.value || isResizing.value) return;
+
         setActiveItem();
         emit('itemActivated', props.nodeId);
     };

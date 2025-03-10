@@ -2,7 +2,6 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import dts from 'vite-plugin-dts';
 import path from 'path';
-import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
     plugins: [
@@ -12,8 +11,11 @@ export default defineConfig({
             outputDir: 'dist',
             staticImport: true,
             skipDiagnostics: false,
+            entryRoot: path.resolve(__dirname, 'src'),
+            include: ['src/index.ts', 'src/**/*.ts', 'src/**/*.vue'],
+            exclude: ['src/App.vue', 'src/main.ts', '**/*.spec.ts', '**/*.test.ts'],
+            rollupTypes: true, // Объединяет все типы в index.d.ts
         }),
-        visualizer({ open: true, filename: 'stats.html' }),
     ],
     resolve: {
         alias: {
@@ -23,8 +25,8 @@ export default defineConfig({
     build: {
         lib: {
             entry: path.resolve(__dirname, 'src/index.ts'),
-            name: '@vueblocks/vueblocks',
-            fileName: (format) => `vueblocks.${format}.js`,
+            name: 'VueGridle',
+            fileName: (format) => `vuegridle.${format}.js`,
             formats: ['es', 'cjs', 'umd'],
         },
         rollupOptions: {
@@ -34,10 +36,24 @@ export default defineConfig({
                     vue: 'Vue',
                 },
                 exports: 'named',
+                assetFileNames: (assetInfo) => {
+                    if (assetInfo.name === 'style.css') return 'style.css';
+                    if (assetInfo.name === 'favicon.ico') return undefined;
+                    return assetInfo.name;
+                },
             },
         },
         sourcemap: true,
         minify: 'terser',
+        terserOptions: {
+            compress: {
+                drop_console: true,
+                drop_debugger: true,
+                passes: 2,
+            },
+            mangle: true,
+        },
         target: 'esnext',
+        emptyOutDir: true,
     },
 });
