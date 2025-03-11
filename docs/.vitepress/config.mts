@@ -3,6 +3,7 @@ import { SearchPlugin } from 'vitepress-plugin-search';
 
 export default defineConfig({
   lang: 'en-US',
+  base: "/VueGridle/",
   title: "VueGridle",
   description: "VueGridle is an ultra-light (just 4.7 kB gzip) and flexible grid library for Vue 3. Built with TypeScript and  Composition API for smooth, dynamic layouts.",
   vite: {
