@@ -6,7 +6,7 @@ hero:
   image:
     src: ./logo.png
     alt: VueGridle
-  tagline: "Ultra-light (4.7kB gzip) grid library for Vue 3, powered by TypeScript & Composition API."
+  tagline: "Ultra-light (~4kB gzip) grid library for Vue 3, powered by TypeScript & Composition API."
   actions:
     - theme: brand
       text: 'Get Started'
