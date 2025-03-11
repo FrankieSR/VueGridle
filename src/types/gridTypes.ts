@@ -80,6 +80,10 @@ export interface GridDrag {
     startDrag: (event: MouseEvent | TouchEvent) => void;
 }
 
+export interface GridItemSlotProps {
+    isNearActive: boolean;
+}
+
 export interface GridResize {
     isResizing: Ref<boolean>;
     startResize: (direction: string, event: MouseEvent | TouchEvent) => void;

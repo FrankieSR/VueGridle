@@ -15,7 +15,7 @@
         @contextmenu.prevent
         @dragstart.prevent
     >
-        <slot />
+        <slot :isNearActive="isNearActive" />
         <template v-if="isActive && resizable">
             <div
                 v-for="handle in resizeHandles"
@@ -47,6 +47,10 @@
         minHeight: 50,
         z: 1,
     });
+
+    defineSlots<{
+        default(props: { isNearActive: boolean }): any;
+    }>();
 
     const emit = defineEmits<GridItemEmits>();
 
