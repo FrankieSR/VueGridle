@@ -135,7 +135,7 @@ const layout = ref([
    <GridItem :freeDrag="true" ... />
    ```
 
-For a deeper dive (including advanced collision handling, dynamic layouts, styling tips, etc.), see the **[Full Documentation](https://example.com/docs)**.
+For a deeper dive (including advanced collision handling, dynamic layouts, styling tips, etc.), see the **[Full Documentation](https://frankiesr.github.io/VueGridle/)**.
 
 ---
 
