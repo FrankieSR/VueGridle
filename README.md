@@ -1,4 +1,4 @@
-![VueGridle Banner](./docs/logo.png)
+![VueGridle Banner](./public/logo.png)
 
 # VueGridle 🚀 - Vue 3 Grid System
 
