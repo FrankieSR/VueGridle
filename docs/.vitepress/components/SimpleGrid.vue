@@ -32,7 +32,11 @@
                         (collidingIds) => onCollisionDetected(item.id, collidingIds)
                     "
                 >
-                    <div class="grid-item-content">{{ item.label }}</div>
+                    <template #default="{ isNearActive }">
+                        <div class="grid-item-content">
+                            {{ isNearActive ? '&#128513;' : item.label }}
+                        </div>
+                    </template>
                 </GridItem>
             </Grid>
             <div class="console-panel">
@@ -58,13 +62,13 @@
     import { ref } from 'vue';
 
     const layout = ref([
-        { id: 'item-1', label: 'Item 1', grid: { x: 50, y: 50, w: 100, h: 100 } },
-        { id: 'item-2', label: 'Item 2', grid: { x: 300, y: 200, w: 100, h: 100 } },
+        { id: 'item-1', label: 'Item 1', grid: { x: 0, y: 0, w: 100, h: 100 } },
+        { id: 'item-2', label: 'Item 2', grid: { x: 500, y: 0, w: 100, h: 100 } },
         {
             id: 'free-drag',
             label: 'Free Drag',
             freeDrag: true,
-            grid: { x: 100, y: 200, w: 200, h: 100, z: 2 },
+            grid: { x: 400, y: 300, w: 200, h: 100, z: 2 },
         },
     ]);
 

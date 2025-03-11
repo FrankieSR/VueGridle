@@ -14,7 +14,7 @@ export default defineConfig({
             entryRoot: path.resolve(__dirname, 'src'),
             include: ['src/index.ts', 'src/**/*.ts', 'src/**/*.vue'],
             exclude: ['src/App.vue', 'src/main.ts', '**/*.spec.ts', '**/*.test.ts'],
-            rollupTypes: true, // Объединяет все типы в index.d.ts
+            rollupTypes: true,
         }),
     ],
     resolve: {

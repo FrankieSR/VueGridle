@@ -4,7 +4,7 @@ layout: home
 hero:
   name: 'VueGridle'
   image:
-    src: ./.vitepress/public/logo.png
+    src: ./logo.png
     alt: VueGridle
   tagline: "Ultra-light (4.7kB gzip) grid library for Vue 3, powered by TypeScript & Composition API."
   actions:

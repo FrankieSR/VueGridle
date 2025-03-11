@@ -27,7 +27,6 @@ coverage
 
 *.tsbuildinfo
 
-*.md
 *.ts
 *.vue
 vite.config.ts
