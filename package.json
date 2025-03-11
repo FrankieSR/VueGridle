@@ -1,6 +1,6 @@
 {
   "name": "vuegridle",
-  "version": "1.0.2",
+  "version": "1.2.0",
   "type": "module",
   "description": "Ultra-light (4.7kB gzip) grid library for Vue 3, powered by TypeScript & Composition API",
   "keywords": [
