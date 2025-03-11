@@ -62,5 +62,12 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/FrankieSR/VueGridle.git"
+  },
+  "standard-version": {
+    "skip": {
+      "chore": true,
+      "docs": true
+    },
+    "commitAll": false
   }
 }
