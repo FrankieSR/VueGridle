@@ -7,6 +7,13 @@ Built with TypeScript and Composition API for smooth, dynamic layouts.
 
 ---
 
+[![npm version](https://badge.fury.io/js/vuegridle.svg)](https://www.npmjs.com/package/vuegridle)
+[![Bundlephobia](https://img.shields.io/bundlephobia/minzip/vuegridle)](https://bundlephobia.com/package/vuegridle)
+[![Downloads](https://img.shields.io/npm/dt/vuegridle.svg)](https://www.npmjs.com/package/vuegridle)
+[![License](https://img.shields.io/npm/l/vuegridle.svg)](https://github.com/FrankieSR/VueGridle/blob/main/LICENSE)
+
+---
+
 ## Features 🌟
 
 - 🖱️ **Drag & Drop Grid Snapping** – Snap items to the grid for precise layouts.  
