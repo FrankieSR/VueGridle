@@ -17,7 +17,7 @@ The container component that defines the grid layout and provides context for it
 | `gridCellSize`  | `Number`| `50`    | The size (in pixels) of each grid cell.  |
 
 
-##### `gridCellSize`
+#### `gridCellSize`
 - **Type**: `Number`
 - **Default**: `50`
 - **Description**: Determines the size of each cell in the grid (in pixels). This affects the snapping behavior of `GridItem` components when `freeDrag` is `false`. Smaller values allow finer grid increments, while larger values create a coarser grid.
@@ -54,7 +54,7 @@ Below is a comprehensive list of props supported by the `GridItem` component, in
 | `minHeight`  | `Number`     | `undefined`  | The minimum height (in pixels) the item can be resized to. Defaults to 50 if not specified.                |
 | `maxWidth`   | `Number`     | `undefined`  | The maximum width (in pixels) the item can be resized to. Limited by grid boundaries if unspecified.       |
 | `maxHeight`  | `Number`     | `undefined`  | The maximum height (in pixels) the item can be resized to. Limited by grid boundaries if unspecified.      |
-
+| `isNearActive`| `Boolean` | `Computed`   | Indicates whether the item is near an active item (within `proximity` distance). Available via slot scope. |
 ---
 
 ## Prop Details
@@ -177,6 +177,34 @@ Below is a comprehensive list of props supported by the `GridItem` component, in
     ```vue
     <GridItem :maxWidth="300" :maxHeight="200" :resizable="true" nodeId="item-1" />
     ```
+
+### `isNearActive`
+- **Type**: `Boolean`
+- **Default**: Computed internally based on `proximity` and the position of the active item.
+- **Description**: A read-only computed property exposed through the default slot scope (`{ isNearActive }`). It becomes `true` when the item is within the `proximity` distance (in pixels) of the currently active (dragged or resized) item, as determined by the grid context. This prop is useful for triggering visual feedback or custom logic when items are close to each other without colliding.
+- **Example**:
+  ```vue
+  <Grid :gridCellSize="50">
+    <GridItem
+      v-for="item in layout"
+      :key="item.id"
+      :nodeId="item.id"
+      :x="item.grid.x"
+      :y="item.grid.y"
+      :w="item.grid.w"
+      :h="item.grid.h"
+      :allNodes="layout"
+      :draggable="true"
+      :proximity="150"
+      v-model="item.grid"
+    >
+      <template #default="{ isNearActive }">
+        <div class="grid-item-content">
+          {{ isNearActive ? 'Near me! 🎈' : item.label }}
+        </div>
+      </template>
+    </GridItem>
+  </Grid>
 
 ---
 

@@ -166,5 +166,5 @@ const handleDropOutside = (event: DragEvent) => {
 
 ## Source
 
-- [View on GitHub](https://github.com/username/repo/blob/main/docs/.vitepress/components/Example04DragOutside.vue)
+- [View on GitHub](https://github.com/FrankieSR/VueGridle/blob/main/docs/.vitepress/components/Example04DragOutside.vue)
 

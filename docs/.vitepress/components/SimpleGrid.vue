@@ -34,7 +34,7 @@
                 >
                     <template #default="{ isNearActive }">
                         <div class="grid-item-content">
-                            {{ isNearActive ? '&#128513;' : item.label }}
+                            {{ isNearActive ? '&#128561;' : item.label }}
                         </div>
                     </template>
                 </GridItem>

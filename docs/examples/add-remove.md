@@ -143,5 +143,5 @@ const removeItem = (id: string) => {
 
 ## Source
 
-- [View on GitHub](https://github.com/username/repo/blob/main/docs/.vitepress/components/Example03AddRemove.vue)
+- [View on GitHub](https://github.com/FrankieSR/VueGridle/blob/main/docs/.vitepress/components/Example03AddRemove.vue)
 
