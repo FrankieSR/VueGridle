@@ -1,14 +1,13 @@
 import { ref, computed, inject, onUnmounted, type Ref } from 'vue';
-import { gridSnapWithinBounds, checkCollision, isCollision } from '@/utils/gridUtils';
+import {
+    gridSnapWithinBounds,
+    createCollisionIndex,
+    getCollidingNodeIds,
+} from '@/utils/gridUtils';
 import { clamp, getClientCoordinates } from '@/utils/helpers';
 import { addGlobalListeners, removeGlobalListeners } from '@/utils/eventListeners';
 import { gridContextKey } from '@/context/gridContext';
-import {
-    type GridItemProps,
-    type GridItemEmits,
-    type GridNode,
-    type GridDrag,
-} from '@/types/gridTypes';
+import { type GridItemProps, type GridItemEmits, type GridDrag } from '@/types/gridTypes';
 
 export function useGridDrag(
     props: GridItemProps,
@@ -26,6 +25,11 @@ export function useGridDrag(
     const isDragging = ref(false);
     const dragInitiated = ref(false);
     const allNodes = computed(() => props.allNodes ?? gridContext.allNodes.value);
+    const collisionIndex = computed(() =>
+        props.allNodes
+            ? createCollisionIndex(props.allNodes, gridContext.gridCellSize.value)
+            : gridContext.collisionIndex.value,
+    );
     const startMouse = ref<{ x: number; y: number }>({ x: 0, y: 0 });
     const startPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 });
 
@@ -83,21 +87,20 @@ export function useGridDrag(
             : gridSnapWithinBounds(nextY, 0, maxY, gridContext.gridCellSize.value);
         const nodes = allNodes.value;
 
-        if (checkCollision(props.nodeId, newX, newY, w, h, nodes, props.freeDrag ?? false)) {
-            const collidingIds = nodes
-                .filter(
-                    (node: GridNode) =>
-                        node.id !== props.nodeId &&
-                        isCollision({ x: newX, y: newY, w, h }, node.grid),
-                )
-                .map((node) => node.id);
+        const collidingIds = getCollidingNodeIds(
+            props.nodeId,
+            { x: newX, y: newY, w, h },
+            nodes,
+            props.freeDrag ?? false,
+            collisionIndex.value,
+        );
+        const hasCollision = collidingIds.length > 0;
+
+        if (hasCollision) {
             emit('collisionDetected', collidingIds);
         }
 
-        if (
-            props.freeDrag ||
-            !checkCollision(props.nodeId, newX, newY, w, h, nodes, props.freeDrag ?? false)
-        ) {
+        if (props.freeDrag || !hasCollision) {
             position.value = { x: newX, y: newY };
             if (props.nodeId === gridContext.activeItemId.value) {
                 gridContext.updateActiveItemRect({ x: newX, y: newY, w, h });

@@ -17,6 +17,7 @@
 import { ref, computed, provide, onMounted, onUnmounted } from 'vue';
 import { type GridContext, type Rect, type ContextItem, type GridNode } from '@/types/gridTypes';
 import { gridContextKey } from '@/context/gridContext';
+import { createCollisionIndex } from '@/utils/gridUtils';
 
 const props = defineProps<{
     gridCellSize?: number;
@@ -25,6 +26,7 @@ const props = defineProps<{
 
 const gridCellSize = computed(() => props.gridCellSize ?? 50);
 const allNodes = computed(() => props.layout ?? []);
+const collisionIndex = computed(() => createCollisionIndex(allNodes.value, gridCellSize.value));
 
 const gridContainer = ref<HTMLElement | null>(null);
 const gridWidth = ref<number>(0);
@@ -71,6 +73,7 @@ provide(gridContextKey, {
     gridHeight,
     gridCellSize,
     allNodes,
+    collisionIndex,
     isManipulating,
     setActiveItem,
     updateActiveItemRect,

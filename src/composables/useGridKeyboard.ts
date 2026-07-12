@@ -1,13 +1,12 @@
 import { computed, inject, type Ref } from 'vue';
-import { gridSnapWithinBounds, checkCollision, isCollision } from '@/utils/gridUtils';
+import {
+    gridSnapWithinBounds,
+    createCollisionIndex,
+    getCollidingNodeIds,
+} from '@/utils/gridUtils';
 import { clamp } from '@/utils/helpers';
 import { gridContextKey } from '@/context/gridContext';
-import {
-    type GridItemEmits,
-    type GridItemProps,
-    type GridKeyboard,
-    type GridNode,
-} from '@/types/gridTypes';
+import { type GridItemEmits, type GridItemProps, type GridKeyboard } from '@/types/gridTypes';
 
 const ARROW_KEYS = ['ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft'] as const;
 type ArrowKey = (typeof ARROW_KEYS)[number];
@@ -37,18 +36,13 @@ export function useGridKeyboard(
     }
 
     const allNodes = computed(() => props.allNodes ?? gridContext.allNodes.value);
+    const collisionIndex = computed(() =>
+        props.allNodes
+            ? createCollisionIndex(props.allNodes, gridContext.gridCellSize.value)
+            : gridContext.collisionIndex.value,
+    );
 
     const getKeyboardStep = () => Math.max(1, gridContext.gridCellSize.value);
-
-    const emitCollision = (rect: { x: number; y: number; w: number; h: number }) => {
-        const collidingIds = allNodes.value
-            .filter((node: GridNode) => node.id !== props.nodeId && isCollision(rect, node.grid))
-            .map((node) => node.id);
-
-        if (collidingIds.length > 0) {
-            emit('collisionDetected', collidingIds);
-        }
-    };
 
     const moveByKey = (key: ArrowKey) => {
         if (!props.draggable) return;
@@ -71,18 +65,17 @@ export function useGridKeyboard(
         if (newX === position.value.x && newY === position.value.y) return;
 
         const nextRect = { x: newX, y: newY, w, h };
-        const hasCollision = checkCollision(
+        const collidingIds = getCollidingNodeIds(
             props.nodeId,
-            newX,
-            newY,
-            w,
-            h,
+            nextRect,
             allNodes.value,
             props.freeDrag ?? false,
+            collisionIndex.value,
         );
+        const hasCollision = collidingIds.length > 0;
 
         if (hasCollision && !props.freeDrag) {
-            emitCollision(nextRect);
+            emit('collisionDetected', collidingIds);
             return;
         }
 
@@ -143,20 +136,19 @@ export function useGridKeyboard(
         if (newW === size.value.w && newH === size.value.h) return;
 
         const nextRect = { x: position.value.x, y: position.value.y, w: newW, h: newH };
-        const hasCollision =
-            !props.freeDrag &&
-            checkCollision(
-                props.nodeId,
-                nextRect.x,
-                nextRect.y,
-                nextRect.w,
-                nextRect.h,
-                allNodes.value,
-                props.freeDrag ?? false,
-            );
+        const collidingIds = props.freeDrag
+            ? []
+            : getCollidingNodeIds(
+                  props.nodeId,
+                  nextRect,
+                  allNodes.value,
+                  props.freeDrag ?? false,
+                  collisionIndex.value,
+              );
+        const hasCollision = collidingIds.length > 0;
 
         if (hasCollision) {
-            emitCollision(nextRect);
+            emit('collisionDetected', collidingIds);
             return;
         }
 
