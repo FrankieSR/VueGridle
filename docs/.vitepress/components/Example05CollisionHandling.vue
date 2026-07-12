@@ -68,14 +68,12 @@
         background: linear-gradient(135deg, rgba(255, 215, 0, 0.7), rgba(255, 107, 107, 0.7));
         border: 2px solid #ffd700;
         animation: pulse 0.5s infinite alternate;
-        transform: scale(1.05);
     }
 
     .near-active .grid-item-content {
         background: linear-gradient(135deg, rgba(50, 205, 50, 0.7), rgba(135, 206, 235, 0.7));
         border: 2px solid #32cd32;
         animation: glow 0.7s infinite alternate;
-        transform: scale(1.02);
     }
 
     @keyframes pulse {

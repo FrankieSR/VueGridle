@@ -33,7 +33,6 @@
     --grid-item-dragging-opacity: 0.98;
     --resize-handle-opacity: 0.6;
     --resize-handle-hover-opacity: 0.9;
-    --grid-item-dragging-scale: 1.03;
     --resize-handle-hover-scale: 1.15;
     --grid-item-hover-lift: 0px;
 
@@ -83,11 +82,10 @@
     background-color: var(--grid-item-bg-color);
     transition: var(--grid-item-transition);
     transform: translate3d(
-            var(--vuegridle-x, 0px),
-            calc(var(--vuegridle-y, 0px) + var(--vuegridle-hover-offset, 0px)),
-            0
-        )
-        scale(var(--vuegridle-scale, 1));
+        var(--vuegridle-x, 0px),
+        calc(var(--vuegridle-y, 0px) + var(--vuegridle-hover-offset, 0px)),
+        0
+    );
     will-change: transform, box-shadow;
     user-select: none;
 }
@@ -100,7 +98,6 @@
 .vuegridle-dragging {
     opacity: var(--grid-item-dragging-opacity);
     cursor: grabbing;
-    --vuegridle-scale: var(--grid-item-dragging-scale);
     box-shadow: var(--grid-item-dragging-shadow);
 }
 
