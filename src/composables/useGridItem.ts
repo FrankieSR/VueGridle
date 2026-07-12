@@ -17,7 +17,7 @@ export function useGridItem(props: GridItemProps, emit: GridItemEmits): GridItem
     const item = ref<HTMLElement | null>(null);
 
     const { position, size, isActive, isNearActive, itemStyle }: GridState = useGridState(props, emit);
-    const { isDragging, startDrag }: GridDrag = useGridDrag(props, position, emit);
+    const { isDragging, startDrag }: GridDrag = useGridDrag(props, position, size, emit);
     const { isResizing, startResize, resizeHandles }: GridResize = useGridResize(props, position, size, emit);
     const { activate }: GridActivation = useGridActivation(props, emit, item, isDragging, isResizing, {
         position,

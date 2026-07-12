@@ -13,10 +13,10 @@ import {
 export function useGridDrag(
     props: GridItemProps,
     position: Ref<{ x: number; y: number }>,
+    size: Ref<{ w: number; h: number }>,
     emit: GridItemEmits,
 ): GridDrag {
     const DRAG_THRESHOLD = 5;
-    const DEFAULT_SIZE = 50;
     const gridContext = inject<GridContext>('gridContext')!;
 
     const isDragging = ref(false);
@@ -54,15 +54,14 @@ export function useGridDrag(
                 onMouseMove,
                 onMouseUp: stopDrag,
                 id: props.nodeId,
-                rect: { ...position.value, w: props.w ?? DEFAULT_SIZE, h: props.h ?? DEFAULT_SIZE },
+                rect: { ...position.value, ...size.value },
             });
             emit('dragStart');
         }
 
         if (!dragInitiated.value) return;
 
-        const w = props.w ?? DEFAULT_SIZE;
-        const h = props.h ?? DEFAULT_SIZE;
+        const { w, h } = size.value;
         let newX = clamp(startPosition.value.x + deltaX, 0, gridContext.gridWidth.value - w);
         let newY = clamp(startPosition.value.y + deltaY, 0, gridContext.gridHeight.value - h);
 
@@ -127,8 +126,8 @@ export function useGridDrag(
             emit('update:modelValue', {
                 x: position.value.x,
                 y: position.value.y,
-                w: props.w ?? DEFAULT_SIZE,
-                h: props.h ?? DEFAULT_SIZE,
+                w: size.value.w,
+                h: size.value.h,
             });
             emit('drop', props.nodeId, position.value.x, position.value.y);
         }
