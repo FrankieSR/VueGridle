@@ -1,16 +1,35 @@
 :root {
     --grid-item-border-color: #f24b69;
-    /* --vt-c-black: #1a1a1a; */
     --vp-c-brand-1: #6ee7b7;
     --vp-button-brand-bg: #f24b69;
-    /* --vp-c-text-2: #054072; */
     --resize-handle-bg-color: #6ee7b7;
     --resize-handle-opacity: 1;
     --grid-line-color: var(--vp-c-border);
+    --vuegridle-docs-width: 1180px;
+    --vuegridle-content-width: 860px;
 }
 
-.vp-doc.container {
-    flex-basis: 400px;
+.VPNavBar .container,
+.VPDoc .container,
+.VPFooter .container,
+.VPHome .container {
+    max-width: var(--vuegridle-docs-width) !important;
+    margin: 0 auto;
+}
+
+.VPNavBar.has-sidebar .content {
+    max-width: calc(var(--vuegridle-docs-width) - var(--vp-sidebar-width)) !important;
+}
+
+.VPDoc.has-sidebar .content-container {
+    max-width: var(--vuegridle-content-width) !important;
+}
+
+.VPDoc:not(.has-sidebar) .content-container {
+    max-width: var(--vuegridle-content-width) !important;
+}
+
+.vp-doc {
     padding-bottom: 32px;
 }
 
@@ -24,7 +43,7 @@
 }
 
 .VPImage.image-src {
-    max-width: 200px;
+    max-width: 180px;
 }
 
 .heading .name {
@@ -36,47 +55,28 @@
     font-size: 1.4rem !important;
 }
 
-h2 {
-    font-size: 1rem !important;
-}
-
 .app-container {
     position: relative;
-    display: inline-block;
+    display: block;
     border-radius: 8px;
     z-index: 10;
     width: 100%;
 }
 
 .main-content {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 16px;
     width: 100%;
-    justify-content: center;
+    align-items: stretch;
 }
 
 .grid-demo {
-    width: 600px;
+    width: min(100%, 640px);
     height: 500px;
     background-color: var(--vp-c-bg-soft);
-    transition:
-        background-color 0.25s;
+    transition: background-color 0.25s;
     position: relative;
-}
-
-@media only screen and (max-width: 640px) {
-    .grid-demo {
-        width: 400px;
-        height: 500px;
-    }
-}
-
-@media only screen and (max-width: 440px) {
-    .grid-demo {
-        width: 300px;
-        height: 400px;
-    }
 }
 
 .grid-item-content {
@@ -87,12 +87,12 @@ h2 {
     justify-content: center;
     font-weight: bold;
     font-size: 1rem;
-    color: rgb(255, 255, 255);
-    background: #4a4a4a;
+    color: #f8fafc;
+    background: #343a46;
 }
 
 .console-panel {
-    width: 350px;
+    width: 100%;
     height: 500px;
     background-color: var(--vp-c-bg-soft);
     transition:
@@ -145,4 +145,81 @@ h2 {
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.8rem;
+}
+
+.example-shell {
+    display: grid;
+    gap: 16px;
+}
+
+.example-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.example-toolbar button,
+.example-toolbar label {
+    font-size: 0.9rem;
+}
+
+.example-button {
+    padding: 8px 12px;
+    border: 1px solid var(--vp-c-divider);
+    border-radius: 6px;
+    background: var(--vp-c-bg-soft);
+    color: var(--vp-c-text-1);
+    cursor: pointer;
+}
+
+.example-button:hover {
+    border-color: var(--vp-c-brand-1);
+}
+
+.demo-container {
+    width: 100%;
+    margin: 24px 0;
+}
+
+.home-path {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    max-width: var(--vuegridle-docs-width);
+    margin: 48px auto 0;
+    padding: 0 24px;
+}
+
+.home-path a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.home-path-item {
+    border-top: 1px solid var(--vp-c-divider);
+    padding-top: 16px;
+}
+
+.home-path-item strong {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--vp-c-text-1);
+}
+
+.home-path-item span {
+    color: var(--vp-c-text-2);
+    font-size: 0.95rem;
+}
+
+@media only screen and (max-width: 760px) {
+    .main-content,
+    .home-path {
+        grid-template-columns: 1fr;
+    }
+
+    .grid-demo,
+    .console-panel {
+        height: 420px;
+    }
 }

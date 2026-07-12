@@ -38,7 +38,6 @@
                 </Grid>
             </div>
         </div>
-        {{ layout }}
     </div>
 </template>
 
@@ -51,7 +50,7 @@
 
     const startDragging = (event: DragEvent) => {
         isDragging = true;
-        event.dataTransfer?.setData('text/plain', 'new-item'); // Передаём идентификатор
+        event.dataTransfer?.setData('text/plain', 'new-item');
     };
 
     const endDragging = () => {
@@ -80,6 +79,7 @@
 
     .drag-outside-inner-box {
         display: flex;
+        flex-wrap: wrap;
         gap: 24px;
         margin-bottom: 24px;
     }
@@ -89,7 +89,7 @@
     }
 
     .source-zone {
-        flex: 1;
+        flex: 0 0 180px;
         height: 100px;
         background: #2d2d2d;
         border-radius: 8px;

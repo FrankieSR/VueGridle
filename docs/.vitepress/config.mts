@@ -44,6 +44,8 @@ export default defineConfig({
                     { text: 'Basic', link: '/examples/basic' },
                     { text: 'Dashboard Layout', link: '/examples/dashboard' },
                     { text: 'Draggable and Resizable', link: '/examples/draggable-resizable' },
+                    { text: 'Keyboard Controls', link: '/examples/keyboard-controls' },
+                    { text: 'Persist Layout', link: '/examples/persist-layout' },
                     { text: 'Add and Remove', link: '/examples/add-remove' },
                     { text: 'Drag Outside', link: '/examples/drag-outside' },
                     { text: 'Collision Handling', link: '/examples/collision-handling' },
