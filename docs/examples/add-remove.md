@@ -16,30 +16,29 @@ Add and remove items while keeping layout state controlled in one array.
 
 ```vue
 <template>
-    <div class="simple-grid-container">
-        <button class="add-button" @click="addItem">Add Item</button>
+    <div class="example-shell">
+        <div class="example-toolbar">
+            <button class="example-button" type="button" @click="addItem">Add widget</button>
+            <span>{{ layout.length }} widgets</span>
+        </div>
+
         <Grid :gridCellSize="50" :layout="layout" class="grid-demo">
             <GridItem
                 v-for="item in layout"
                 :key="item.id"
                 :nodeId="item.id"
-                :x="item.grid.x"
-                :y="item.grid.y"
-                :w="item.grid.w"
-                :h="item.grid.h"
-                :draggable="true"
                 v-model="item.grid"
                 :minWidth="100"
                 :minHeight="100"
-                @item-activated="activeItemId = item.id"
-                @item-deactivated="activeItemId = null"
+                :ariaLabel="`${item.label} widget`"
             >
                 <div class="grid-item-content">
-                    {{ item.label }}
+                    <span>{{ item.label }}</span>
                     <button
-                        v-if="activeItemId === item.id"
                         class="remove-button"
-                        @click="removeItem(item.id)"
+                        type="button"
+                        @pointerdown.stop
+                        @click.stop="removeItem(item.id)"
                     >
                         Remove
                     </button>
@@ -55,94 +54,41 @@ Add and remove items while keeping layout state controlled in one array.
     import 'vuegridle/style.css';
 
     const layout = ref([
-        { id: 'item-1', label: 'Item 1', grid: { x: 50, y: 50, w: 100, h: 100 } },
-        { id: 'item-2', label: 'Item 2', grid: { x: 200, y: 200, w: 100, h: 100 } },
+        { id: 'item-1', label: 'Revenue', grid: { x: 50, y: 50, w: 150, h: 100 } },
+        { id: 'item-2', label: 'Orders', grid: { x: 250, y: 150, w: 150, h: 100 } },
     ]);
 
-    const activeItemId = ref<string | null>(null);
+    let nextItemNumber = 3;
 
     const addItem = () => {
-        const newId = `item-${layout.value.length + 1}`;
+        const id = `item-${nextItemNumber}`;
+        const offset = (nextItemNumber - 1) * 30;
+
         layout.value.push({
-            id: newId,
-            label: `Item ${layout.value.length + 1}`,
-            grid: {
-                x: 50 + layout.value.length * 20,
-                y: 50 + layout.value.length * 20,
-                w: 100,
-                h: 100,
-            },
+            id,
+            label: `Widget ${nextItemNumber}`,
+            grid: { x: 50 + offset, y: 50 + offset, w: 150, h: 100 },
         });
+        nextItemNumber += 1;
     };
 
     const removeItem = (id: string) => {
-        const index = layout.value.findIndex((item) => item.id === id);
-        if (index !== -1) {
-            layout.value.splice(index, 1);
-            activeItemId.value = null;
-        }
+        layout.value = layout.value.filter((item) => item.id !== id);
     };
 </script>
 
 <style scoped>
-    .simple-grid-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 16px;
-    }
-
-    .add-button {
-        padding: 8px 16px;
-        margin-bottom: 20px;
-        background-color: #6ee7b7;
-        color: #1e2229;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: bold;
-    }
-
-    .add-button:hover {
-        background-color: #4ade80;
-    }
-
-    .grid-demo {
-        width: 400px;
-        height: 400px;
-        border: 1px solid var(--grid-item-border-color);
-        position: relative;
-    }
-
-    .grid-item-content {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(96, 165, 250, 0.1);
-        color: #fff;
-        font-weight: bold;
-        border-radius: 6px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        position: relative;
-    }
-
     .remove-button {
         position: absolute;
-        top: 5px;
-        right: 5px;
+        top: 8px;
+        right: 8px;
         padding: 4px 8px;
-        background-color: #ff6b6b;
-        color: #fff;
-        border: none;
+        border: 0;
         border-radius: 4px;
+        background: #ef4444;
+        color: #fff;
         cursor: pointer;
         font-size: 12px;
-    }
-
-    .remove-button:hover {
-        background-color: #ff8787;
     }
 </style>
 ```
