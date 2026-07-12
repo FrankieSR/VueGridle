@@ -9,7 +9,11 @@
             'vuegridle-highlight': isNearActive,
         }"
         :style="itemStyle"
+        :tabindex="focusable ? 0 : undefined"
+        role="group"
+        :aria-label="ariaLabel || `Grid item ${nodeId}`"
         @pointerdown="startDrag"
+        @keydown="handleKeydown"
         @click="activate"
         @contextmenu.prevent
         @dragstart.prevent
@@ -43,6 +47,7 @@
         minWidth: 50,
         minHeight: 50,
         z: 1,
+        focusable: true,
     });
 
     defineSlots<{
@@ -61,6 +66,7 @@
         startDrag,
         startResize,
         activate,
+        handleKeydown,
         resizeHandles,
     } = useGridItem(props, emit);
 </script>

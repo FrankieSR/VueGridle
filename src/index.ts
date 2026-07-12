@@ -6,6 +6,7 @@ export {
     useGridResize,
     useGridState,
     useGridActivation,
+    useGridKeyboard,
 } from './composables/useGridItem';
 
 export { default as Grid } from './components/Grid.vue';

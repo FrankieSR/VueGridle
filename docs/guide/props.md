@@ -72,6 +72,8 @@ Below is a comprehensive list of props supported by the `GridItem` component, in
 | `minHeight`    | `Number`     | `undefined`  | The minimum height (in pixels) the item can be resized to. Defaults to 50 if not specified.                |
 | `maxWidth`     | `Number`     | `undefined`  | The maximum width (in pixels) the item can be resized to. Limited by grid boundaries if unspecified.       |
 | `maxHeight`    | `Number`     | `undefined`  | The maximum height (in pixels) the item can be resized to. Limited by grid boundaries if unspecified.      |
+| `focusable`    | `Boolean`    | `true`       | Enables keyboard focus and keyboard controls for the item.                                                 |
+| `ariaLabel`    | `String`     | `undefined`  | Accessible label for the item. Falls back to `Grid item {nodeId}`.                                         |
 | `isNearActive` | `Boolean`    | `Computed`   | Indicates whether the item is near an active item (within `proximity` distance). Available via slot scope. |
 
 ---
@@ -200,6 +202,16 @@ Below is a comprehensive list of props supported by the `GridItem` component, in
     <GridItem :maxWidth="300" :maxHeight="200" :resizable="true" nodeId="item-1" />
     ```
 
+### `focusable`, `ariaLabel`
+
+- **Type**: `Boolean`, `String`
+- **Default**: `focusable: true`, `ariaLabel: undefined`
+- **Description**: Makes `GridItem` reachable with Tab and gives it an accessible name. Focused items can be activated with `Enter` or `Space`, moved with arrow keys, and resized with `Shift` + arrow keys.
+- **Example**:
+    ```vue
+    <GridItem nodeId="sales-chart" ariaLabel="Sales chart widget" v-model="item.grid" />
+    ```
+
 ### `isNearActive`
 
 - **Type**: `Boolean`
@@ -237,5 +249,6 @@ Below is a comprehensive list of props supported by the `GridItem` component, in
 - **Constraints**: Combine `minWidth`, `minHeight`, `maxWidth`, and `maxHeight` to enforce size limits tailored to your use case.
 - **Free Dragging**: Enable `freeDrag` for pixel-perfect control, but note that collision detection may still apply unless explicitly disabled in your logic.
 - **Collision Detection**: Pass `layout` to `Grid` so child items can accurately detect overlaps and emit `collision-detected` events. `allNodes` on `GridItem` is deprecated and should only be used for legacy or advanced override cases.
+- **Keyboard Accessibility**: Keep `focusable` enabled for interactive dashboards. Use `ariaLabel` when `nodeId` is not meaningful for screen reader users.
 
 This guide covers all props for the `Grid` and `GridItem` components, providing a foundation for building flexible and interactive grid layouts.

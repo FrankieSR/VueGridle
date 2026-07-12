@@ -47,7 +47,7 @@ const GridCollisionHarness = defineComponent({
                                 nodeId: node.id,
                                 modelValue: node.grid,
                                 draggable: true,
-                                resizable: false,
+                                resizable: true,
                                 ...(index === 0
                                     ? {
                                           allNodes: props.overrideNodes,
@@ -152,5 +152,46 @@ describe('Grid layout collision context', () => {
         await nextTick();
 
         expect(onCollision).toHaveBeenCalledWith(['b']);
+    });
+
+    it('moves a focused GridItem with arrow keys', async () => {
+        const onCollision = vi.fn();
+        const wrapper = mount(GridCollisionHarness, {
+            props: {
+                layout: createLayout(300),
+                onCollision,
+            },
+        });
+        const item = wrapper.findAll('.vuegridle-grid-item')[0];
+
+        expect(item.attributes('tabindex')).toBe('0');
+        expect(item.attributes('role')).toBe('group');
+        expect(item.attributes('aria-label')).toBe('Grid item a');
+
+        await item.trigger('keydown', {
+            key: 'ArrowRight',
+        });
+        await nextTick();
+
+        expect(wrapper.props('layout')[0].grid).toEqual({ x: 50, y: 0, w: 100, h: 100 });
+    });
+
+    it('resizes a focused GridItem with Shift and arrow keys', async () => {
+        const onCollision = vi.fn();
+        const wrapper = mount(GridCollisionHarness, {
+            props: {
+                layout: createLayout(300),
+                onCollision,
+            },
+        });
+        const item = wrapper.findAll('.vuegridle-grid-item')[0];
+
+        await item.trigger('keydown', {
+            key: 'ArrowRight',
+            shiftKey: true,
+        });
+        await nextTick();
+
+        expect(wrapper.props('layout')[0].grid).toEqual({ x: 0, y: 0, w: 150, h: 100 });
     });
 });

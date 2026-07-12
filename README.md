@@ -121,6 +121,7 @@ Now you can use `<Grid>` and `<GridItem>` in your templates.
     - `x`, `y`, `w`, `h`: Position & size in pixels.
     - `draggable`, `resizable`, `freeDrag`, etc.
     - `allNodes`: Deprecated optional override for collision detection. Prefer passing `layout` to the parent `<Grid>`.
+    - `focusable`, `ariaLabel`: Keyboard focus, arrow-key movement, and accessible naming.
     - `modelValue`: Reactive object `{ x, y, w, h }` (for `v-model`).
 
 - **Key Events**

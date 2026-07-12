@@ -55,6 +55,8 @@ export interface GridItemProps {
     minHeight?: number;
     maxWidth?: number;
     maxHeight?: number;
+    focusable?: boolean;
+    ariaLabel?: string;
 }
 
 export interface GridItemEmits {
@@ -98,6 +100,10 @@ export interface GridActivation {
     activate: () => void;
 }
 
+export interface GridKeyboard {
+    handleKeydown: (event: KeyboardEvent) => void;
+}
+
 export type GridItemReturn = {
     item: Ref<HTMLElement | null>;
     isDragging: Ref<boolean>;
@@ -108,5 +114,6 @@ export type GridItemReturn = {
     startDrag: (event: PointerEvent) => void;
     startResize: (direction: string, event: PointerEvent) => void;
     activate: () => void;
+    handleKeydown: (event: KeyboardEvent) => void;
     resizeHandles: readonly ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
 };

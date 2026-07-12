@@ -154,3 +154,8 @@
     outline-offset: 0;
     box-shadow: var(--grid-item-active-shadow);
 }
+
+.vuegridle-grid-item:focus-visible {
+    outline: 2px solid var(--resize-handle-bg-color);
+    outline-offset: 2px;
+}

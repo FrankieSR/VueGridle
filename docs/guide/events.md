@@ -221,5 +221,6 @@ Below is a comprehensive list of events supported by the `GridItem` and `Grid` c
 - **Activation Handling**: Combine `item-activated` and `item-deactivated` to manage focus or highlight states within the grid.
 - **Collision Management**: Leverage `collision-detected` to implement custom overlap behaviors, such as snapping items apart or showing warnings.
 - **Model Syncing**: Use `update:modelValue` with `v-model` to keep your data in sync with the item’s position and size without manual event handling.
+- **Keyboard Accessibility**: Focus a `GridItem` with Tab, use arrow keys to move it by one grid cell, and use Shift + arrow keys to resize it.
 
 This guide covers all events for the `GridItem` and `Grid` components, enabling you to build responsive and interactive grid layouts.
