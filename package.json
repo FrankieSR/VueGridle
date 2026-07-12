@@ -71,6 +71,10 @@
         "type": "git",
         "url": "https://github.com/FrankieSR/VueGridle.git"
     },
+    "homepage": "https://frankiesr.github.io/VueGridle/",
+    "bugs": {
+        "url": "https://github.com/FrankieSR/VueGridle/issues"
+    },
     "standard-version": {
         "skip": {
             "chore": true,

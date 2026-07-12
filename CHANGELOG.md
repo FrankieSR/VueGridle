@@ -13,4 +13,4 @@ All notable changes to this project will be documented in this file. See [standa
 - clean up drag and resize listeners on unmount
 - prevent hover, active, collision, and drag states from visually shifting or scaling grid items
 
-### [1.0.1](https://github.com/FrankieSR/VueGridle/compare/v1.2.0...v1.0.1) (2025-03-11)
+### [1.0.1](https://github.com/FrankieSR/VueGridle/releases/tag/v1.0.1) (2025-03-11)
