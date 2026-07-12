@@ -2,7 +2,9 @@
 outline: deep
 ---
 
-# 03. Add and Remove Example
+# Add and Remove Example
+
+Add and remove items while keeping layout state controlled in one array.
 
 ---
 
@@ -49,8 +51,8 @@ outline: deep
 
 <script setup lang="ts">
     import { ref } from 'vue';
-    import Grid from './Grid.vue';
-    import GridItem from './GridItem.vue';
+    import { Grid, GridItem } from 'vuegridle';
+    import 'vuegridle/style.css';
 
     const layout = ref([
         { id: 'item-1', label: 'Item 1', grid: { x: 50, y: 50, w: 100, h: 100 } },
@@ -77,7 +79,7 @@ outline: deep
         const index = layout.value.findIndex((item) => item.id === id);
         if (index !== -1) {
             layout.value.splice(index, 1);
-            activeItemId.value = null; // Сбрасываем активный элемент после удаления
+            activeItemId.value = null;
         }
     };
 </script>

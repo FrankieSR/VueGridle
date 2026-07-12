@@ -93,7 +93,7 @@ The following CSS classes are applied to the `Grid` and `GridItem` components to
 - **Description**: Applied when hovering over a grid item.
 - **Styles**:
     - `box-shadow: var(--grid-item-shadow)`: Adds a subtle shadow.
-    - `transform: translateY(var(--grid-item-hover-lift))`: Lifts the item slightly.
+    - `--vuegridle-hover-offset: var(--grid-item-hover-lift)`: Adjusts the composed translate offset without replacing the item transform.
 
 ### `.vuegridle-dragging`
 
@@ -139,14 +139,21 @@ The following CSS classes are applied to the `Grid` and `GridItem` components to
 
 - **Description**: Applied to highlight a grid item (e.g., when near another item).
 - **Styles**:
-    - `border: var(--grid-item-highlight-border-width) var(--grid-item-highlight-border-style) var(--grid-item-border-color)`: Adds a dashed border.
+    - `outline`: Adds a non-layout-shifting outline.
 
 ### `.vuegridle-grid-item.vuegridle-active`
 
 - **Description**: Applied to the currently active grid item.
 - **Styles**:
-    - `border: var(--grid-item-active-border-width) var(--grid-item-active-border-style) var(--grid-item-border-color)`: Adds a solid border.
+    - `outline`: Adds a non-layout-shifting outline.
     - `box-shadow: var(--grid-item-active-shadow)`: Adds a distinct shadow.
+
+### `.vuegridle-grid-item:focus-visible`
+
+- **Description**: Applied when a keyboard user focuses a grid item.
+- **Styles**:
+    - `outline`: Uses the resize handle color by default.
+    - `outline-offset`: Keeps the focus ring visible outside the item.
 
 ---
 
@@ -156,5 +163,6 @@ The following CSS classes are applied to the `Grid` and `GridItem` components to
 - **Grid Visibility**: Adjust `--grid-line-color` and `--grid-cell-size` to make the grid more or less prominent.
 - **Interaction Feedback**: Modify `--resize-handle-hover-scale` or shadow variables for stronger visual cues.
 - **Performance**: Fine-tune `--grid-item-transition` and `--resize-handle-transition` durations for smoother or faster animations.
+- **Accessibility**: Keep a visible `:focus-visible` style for keyboard users.
 
 This guide covers the styling system for the grid, providing a flexible foundation for customization.

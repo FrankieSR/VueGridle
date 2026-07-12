@@ -2,7 +2,9 @@
 outline: deep
 ---
 
-# 04. Drag Outside Example
+# Drag Outside Example
+
+Track the active drag item and react when users drop or release it outside your desired region.
 
 ---
 
@@ -54,8 +56,8 @@ outline: deep
 
 <script setup lang="ts">
     import { ref } from 'vue';
-    import Grid from './Grid.vue';
-    import GridItem from './GridItem.vue';
+    import { Grid, GridItem } from 'vuegridle';
+    import 'vuegridle/style.css';
 
     const layout = ref([
         { id: 'item-1', label: 'Item 1', grid: { x: 50, y: 50, w: 100, h: 100 } },
@@ -72,7 +74,7 @@ outline: deep
     };
 
     const onDrop = (nodeId: string, x: number, y: number) => {
-        draggedItemId = null; // Сбрасываем draggedItemId, если элемент отпущен внутри грида
+        draggedItemId = null;
     };
 
     const handleDropOutside = (event: DragEvent) => {

@@ -63,8 +63,8 @@ Below is a comprehensive list of props supported by the `GridItem` component, in
 | `z`            | `Number`     | `1`          | The z-index of the item, determining its stacking order within the grid.                                   |
 | `proximity`    | `Number`     | `150`        | The distance (<= in pixels) at which the item is considered "near" an active item.                         |
 | `freeDrag`     | `Boolean`    | `false`      | Enables free dragging, disabling grid snapping for more fine-grained control.                              |
-| `resizable`    | `Boolean`    | `false`      | Enables resizing of the item via corner handles.                                                           |
-| `draggable`    | `Boolean`    | `false`      | Enables dragging of the item within the grid.                                                              |
+| `resizable`    | `Boolean`    | `true`       | Enables resizing of the item via corner handles.                                                           |
+| `draggable`    | `Boolean`    | `true`       | Enables dragging of the item within the grid.                                                              |
 | `nodeId`       | `String`     | **Required** | A unique identifier for the item, used for tracking and collision detection.                               |
 | `allNodes`     | `GridNode[]` | `undefined`  | Deprecated optional collision layout override. Prefer passing `layout` to the parent `Grid`.               |
 | `modelValue`   | `Rect`       | **Required** | A reactive object `{ x: number, y: number, w: number, h: number }` for two-way data binding via `v-model`. |
@@ -123,7 +123,7 @@ Below is a comprehensive list of props supported by the `GridItem` component, in
 ### `resizable`
 
 - **Type**: `Boolean`
-- **Default**: `false`
+- **Default**: `true`
 - **Description**: Enables resize handles on the corners of the item, allowing users to adjust its width and height interactively. Resizing respects `minWidth`, `minHeight`, `maxWidth`, and `maxHeight` constraints.
 - **Example**:
     ```vue
@@ -133,7 +133,7 @@ Below is a comprehensive list of props supported by the `GridItem` component, in
 ### `draggable`
 
 - **Type**: `Boolean`
-- **Default**: `false`
+- **Default**: `true`
 - **Description**: Enables dragging of the item within the grid. When combined with `freeDrag`, dragging is unrestricted; otherwise, it snaps to the grid.
 - **Example**:
     ```vue

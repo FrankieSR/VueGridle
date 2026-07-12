@@ -2,7 +2,9 @@
 outline: deep
 ---
 
-# 05. Collision Handling Example
+# Collision Handling Example
+
+Use `collision-detected` to warn users, reject a save, or show custom overlap feedback.
 
 ---
 
@@ -57,6 +59,8 @@ outline: deep
 
 <script setup lang="ts">
     import { ref } from 'vue';
+    import { Grid, GridItem } from 'vuegridle';
+    import 'vuegridle/style.css';
 
     const layout = ref([
         { id: 'item-1', label: 'Item 1', grid: { x: 50, y: 50, w: 150, h: 100 } },
