@@ -61,13 +61,13 @@
     import { ref } from 'vue';
 
     const layout = ref([
-        { id: 'item-1', label: 'Item 1', grid: { x: 0, y: 0, w: 100, h: 100 } },
-        { id: 'item-2', label: 'Item 2', grid: { x: 500, y: 0, w: 100, h: 100 } },
+        { id: 'item-1', label: 'Item 1', grid: { x: 50, y: 50, w: 100, h: 100 } },
+        { id: 'item-2', label: 'Item 2', grid: { x: 350, y: 50, w: 100, h: 100 } },
         {
             id: 'free-drag',
             label: 'Free Drag',
             freeDrag: true,
-            grid: { x: 400, y: 300, w: 200, h: 100, z: 2 },
+            grid: { x: 250, y: 300, w: 200, h: 100, z: 2 },
         },
     ]);
 
