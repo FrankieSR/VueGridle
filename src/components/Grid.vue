@@ -24,7 +24,7 @@ const props = defineProps<{
     layout?: GridNode[];
 }>();
 
-const gridCellSize = ref(props.gridCellSize ?? 50);
+const gridCellSize = computed(() => props.gridCellSize ?? 50);
 const allNodes = computed(() => props.layout ?? []);
 
 const gridContainer = ref<HTMLElement | null>(null);
