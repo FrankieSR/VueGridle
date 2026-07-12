@@ -1,15 +1,18 @@
 ## Installation ⚡
 
 ### Prerequisites
+
 - Vue 3.x
 - Node.js 18+ (recommended)
 
 ### Via npm
+
 ```bash
 npm install vuegridle
 ```
 
 ### Via Yarn
+
 ```bash
 yarn add vuegridle
 ```
@@ -25,6 +28,7 @@ Add `VueGridle` to your Vue 3 app:
 import { createApp } from 'vue';
 import App from './App.vue';
 import { Grid, GridItem } from 'vuegridle';
+import 'vuegridle/style.css';
 
 const app = createApp(App);
 app.component('Grid', Grid);

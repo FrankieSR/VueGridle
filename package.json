@@ -2,7 +2,7 @@
     "name": "vuegridle",
     "version": "1.0.2",
     "type": "module",
-    "description": "Ultra-light (~4kB gzip) grid library for Vue 3, powered by TypeScript & Composition API",
+    "description": "Small, typed grid library for Vue 3, powered by TypeScript & Composition API",
     "keywords": [
         "vue",
         "vue3",
@@ -23,8 +23,12 @@
             "types": "./dist/index.d.ts",
             "import": "./dist/vuegridle.es.js",
             "require": "./dist/vuegridle.cjs.js"
-        }
+        },
+        "./style.css": "./dist/vuegridle.css"
     },
+    "sideEffects": [
+        "**/*.css"
+    ],
     "files": [
         "dist"
     ],

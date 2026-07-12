@@ -2,7 +2,7 @@
 
 # VueGridle 🚀 - Vue 3 Grid System
 
-`VueGridle` is an ultra-light (~4kB gzip) and flexible grid library for Vue 3.  
+`VueGridle` is a small, typed, and flexible grid library for Vue 3.  
 Built with TypeScript and Composition API for smooth, dynamic layouts.
 
 ---
@@ -55,6 +55,7 @@ Add `VueGridle` to your Vue 3 app:
 import { createApp } from 'vue';
 import App from './App.vue';
 import { Grid, GridItem } from 'vuegridle';
+import 'vuegridle/style.css';
 
 const app = createApp(App);
 app.component('Grid', Grid);
