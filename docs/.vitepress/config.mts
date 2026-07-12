@@ -7,6 +7,27 @@ export default defineConfig({
     title: 'VueGridle',
     description:
         'Small, typed Vue 3 grid primitives for controlled dashboards and draggable layouts.',
+    head: [
+        ['link', { rel: 'icon', type: 'image/png', href: '/VueGridle/favicon.png' }],
+        ['meta', { property: 'og:title', content: 'VueGridle' }],
+        [
+            'meta',
+            {
+                property: 'og:description',
+                content:
+                    'Small, typed Vue 3 grid primitives for controlled dashboards and draggable layouts.',
+            },
+        ],
+        [
+            'meta',
+            { property: 'og:image', content: 'https://frankiesr.github.io/VueGridle/logo.png' },
+        ],
+        ['meta', { name: 'twitter:card', content: 'summary' }],
+        [
+            'meta',
+            { name: 'twitter:image', content: 'https://frankiesr.github.io/VueGridle/logo.png' },
+        ],
+    ],
     vite: {
         plugins: [
             SearchPlugin({
@@ -15,7 +36,7 @@ export default defineConfig({
         ],
     },
     themeConfig: {
-        logo: './logo.png',
+        logo: '/logo.png',
         nav: [
             { text: 'Home', link: '/' },
             { text: 'Guide', link: '/guide/getting-started' },
@@ -44,6 +65,8 @@ export default defineConfig({
                     { text: 'Basic', link: '/examples/basic' },
                     { text: 'Dashboard Layout', link: '/examples/dashboard' },
                     { text: 'Draggable and Resizable', link: '/examples/draggable-resizable' },
+                    { text: 'Keyboard Controls', link: '/examples/keyboard-controls' },
+                    { text: 'Persist Layout', link: '/examples/persist-layout' },
                     { text: 'Add and Remove', link: '/examples/add-remove' },
                     { text: 'Drag Outside', link: '/examples/drag-outside' },
                     { text: 'Collision Handling', link: '/examples/collision-handling' },

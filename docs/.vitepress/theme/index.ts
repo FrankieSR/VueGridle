@@ -7,6 +7,8 @@ import Example02DraggableResizeble from '../components/Example02DraggableResizeb
 import Example03AddRemove from '../components/Example03AddRemove.vue';
 import Example04DragOutside from '../components/Example04DragOutside.vue';
 import Example05CollisionHandling from '../components/Example05CollisionHandling.vue';
+import Example06KeyboardControls from '../components/Example06KeyboardControls.vue';
+import Example07PersistLayout from '../components/Example07PersistLayout.vue';
 
 import '../../../dist/vuegridle.css';
 import './custom.css';
@@ -21,8 +23,9 @@ const theme: Theme = {
         app.component('Example03AddRemove', Example03AddRemove);
         app.component('Example04DragOutside', Example04DragOutside);
         app.component('Example05CollisionHandling', Example05CollisionHandling);
+        app.component('Example06KeyboardControls', Example06KeyboardControls);
+        app.component('Example07PersistLayout', Example07PersistLayout);
         app.component('SimpleGrid', SimpleGrid);
-        
     },
 };
 

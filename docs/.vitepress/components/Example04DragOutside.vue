@@ -16,7 +16,7 @@
                 <Grid
                     :gridCellSize="50"
                     :layout="layout"
-                    class="grid-demo"
+                    class="grid-demo drag-outside-grid"
                     @dragover.prevent
                     @drop="handleDropInGrid"
                 >
@@ -24,21 +24,16 @@
                         v-for="item in layout"
                         :key="item.id"
                         :nodeId="item.id"
-                        :x="item.grid.x"
-                        :y="item.grid.y"
-                        :w="item.grid.w"
-                        :h="item.grid.h"
-                        :draggable="true"
                         v-model="item.grid"
                         :minWidth="100"
                         :minHeight="100"
+                        :ariaLabel="`${item.label} widget`"
                     >
                         <div class="grid-item-content">{{ item.label }}</div>
                     </GridItem>
                 </Grid>
             </div>
         </div>
-        {{ layout }}
     </div>
 </template>
 
@@ -51,7 +46,7 @@
 
     const startDragging = (event: DragEvent) => {
         isDragging = true;
-        event.dataTransfer?.setData('text/plain', 'new-item'); // Передаём идентификатор
+        event.dataTransfer?.setData('text/plain', 'new-item');
     };
 
     const endDragging = () => {
@@ -61,11 +56,15 @@
     const handleDropInGrid = (event: DragEvent) => {
         event.preventDefault();
         if (isDragging) {
+            const gridElement = event.currentTarget as HTMLElement;
+            const gridRect = gridElement.getBoundingClientRect();
+            const x = Math.max(0, Math.round((event.clientX - gridRect.left - 50) / 50) * 50);
+            const y = Math.max(0, Math.round((event.clientY - gridRect.top - 50) / 50) * 50);
             const newId = `item-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
             layout.value.push({
                 id: newId,
                 label: `Item ${layout.value.length + 1}`,
-                grid: { x: event.offsetX - 50, y: event.offsetY - 50, w: 100, h: 100 },
+                grid: { x, y, w: 100, h: 100 },
             });
             isDragging = false;
         }
@@ -74,22 +73,23 @@
 
 <style scoped>
     .drag-outside-container {
-        padding: 16px;
-        gap: 16px;
+        padding: 0;
     }
 
     .drag-outside-inner-box {
-        display: flex;
+        display: grid;
+        grid-template-columns: 180px minmax(0, 1fr);
         gap: 24px;
         margin-bottom: 24px;
+        align-items: start;
     }
 
     .grid-wrapper {
-        align-items: center;
+        min-width: 0;
     }
 
     .source-zone {
-        flex: 1;
+        flex: 0 0 180px;
         height: 100px;
         background: #2d2d2d;
         border-radius: 8px;
@@ -110,5 +110,17 @@
 
     .source-item:active {
         cursor: grabbing;
+    }
+
+    .drag-outside-grid {
+        width: 100%;
+        max-width: 560px;
+        height: 360px;
+    }
+
+    @media only screen and (max-width: 760px) {
+        .drag-outside-inner-box {
+            grid-template-columns: 1fr;
+        }
     }
 </style>

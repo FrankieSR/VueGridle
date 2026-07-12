@@ -1,132 +1,81 @@
 <template>
-    <div class="simple-grid-container">
-        <div class="grid-wrapper">
-            <button class="add-button" @click="addItem">Add Item</button>
-            <Grid :gridCellSize="50" :layout="layout" class="grid-demo">
-                <GridItem
-                    v-for="item in layout"
-                    :key="item.id"
-                    :nodeId="item.id"
-                    :x="item.grid.x"
-                    :y="item.grid.y"
-                    :w="item.grid.w"
-                    :h="item.grid.h"
-                    :draggable="true"
-                    v-model="item.grid"
-                    :minWidth="100"
-                    :minHeight="100"
-                    @item-activated="setActiveItem(item.id)"
-                >
-                    <div class="grid-item-content">
-                        {{ item.label }}
-                        <button
-                            v-if="activeItemId === item.id"
-                            class="remove-button"
-                            @click.stop="removeItem(item.id)"
-                        >
-                            Remove
-                        </button>
-                    </div>
-                </GridItem>
-            </Grid>
+    <div class="example-shell">
+        <div class="example-toolbar">
+            <button class="example-button" type="button" @click="addItem">Add widget</button>
+            <span>{{ layout.length }} widgets</span>
         </div>
 
-        <div class="console-panel">
-            <div class="console-body">
-                <pre>{{ formattedLayout }}</pre>
-
-        </div>
+        <Grid :gridCellSize="50" :layout="layout" class="grid-demo">
+            <GridItem
+                v-for="item in layout"
+                :key="item.id"
+                :nodeId="item.id"
+                v-model="item.grid"
+                :minWidth="100"
+                :minHeight="100"
+                :ariaLabel="`${item.label} widget`"
+                @item-activated="activeItemId = item.id"
+                @item-deactivated="activeItemId = null"
+            >
+                <div class="grid-item-content">
+                    <span>{{ item.label }}</span>
+                    <button
+                        v-if="activeItemId === item.id"
+                        class="remove-button"
+                        type="button"
+                        @pointerdown.stop
+                        @click.stop="removeItem(item.id)"
+                    >
+                        Remove
+                    </button>
+                </div>
+            </GridItem>
+        </Grid>
     </div>
-</div>
-
 </template>
+
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 
 const layout = ref([
-    { id: 'item-1', label: 'Item 1', grid: { x: 50, y: 50, w: 100, h: 100 } },
-    { id: 'item-2', label: 'Item 2', grid: { x: 200, y: 200, w: 100, h: 100 } },
+    { id: 'item-1', label: 'Revenue', grid: { x: 50, y: 50, w: 150, h: 100 } },
+    { id: 'item-2', label: 'Orders', grid: { x: 250, y: 150, w: 150, h: 100 } },
 ]);
 
 const activeItemId = ref<string | null>(null);
-
-const formattedLayout = computed(() => {
-    return JSON.stringify(layout.value, null, 2);
-});
-
-const setActiveItem = (id: string) => {
-    activeItemId.value = id;
-};
+let nextItemNumber = 3;
 
 const addItem = () => {
-    const newId = `item-${Date.now()}-${Math.floor(Math.random() * 1000)}`; 
+    const id = `item-${nextItemNumber}`;
+    const offset = (nextItemNumber - 1) * 30;
+
     layout.value.push({
-        id: newId,
-        label: `Item ${layout.value.length + 1}`,
-        grid: { x: 50, y: 50, w: 100, h: 100 },
+        id,
+        label: `Widget ${nextItemNumber}`,
+        grid: { x: 50 + offset, y: 50 + offset, w: 150, h: 100 },
     });
+    nextItemNumber += 1;
 };
 
 const removeItem = (id: string) => {
-    const index = layout.value.findIndex((item) => item.id === id);
-    if (index !== -1) {
-        layout.value.splice(index, 1);
-        if (activeItemId.value === id) {
-            activeItemId.value = null; 
-        }
-        console.log('Updated layout:', layout.value);
+    layout.value = layout.value.filter((item) => item.id !== id);
+    if (activeItemId.value === id) {
+        activeItemId.value = null;
     }
 };
 </script>
+
 <style scoped>
-.simple-grid-container {
-    display: flex;
-    align-items: flex-start;
-    padding: 16px;
-    gap: 20px;
-}
-
-.grid-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.add-button {
-    padding: 8px 16px;
-    margin-bottom: 20px;
-    background-color: #6ee7b7;
-    color: #1e2229;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.add-button:hover {
-    background-color: #4ade80;
-}
-
 .remove-button {
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 8px;
+    right: 8px;
     padding: 4px 8px;
-    background-color: #ff6b6b;
-    color: #fff;
-    border: none;
+    border: 0;
     border-radius: 4px;
+    background: #ef4444;
+    color: #fff;
     cursor: pointer;
     font-size: 12px;
-}
-
-.remove-button:hover {
-    background-color: #ff8787;
-}
-
-pre {
-    margin: 0;
-    white-space: pre-wrap;
-    word-wrap: break-word;
 }
 </style>

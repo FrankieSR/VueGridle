@@ -1,15 +1,20 @@
-# VueGridle
+<p align="center">
+    <img src="./docs/public/logo.png" alt="VueGridle logo" width="96" height="96" />
+</p>
 
-Small, typed grid primitives for Vue 3 dashboards and draggable layouts.
+<h1 align="center">VueGridle</h1>
 
----
+<p align="center">
+    Small, typed grid primitives for Vue 3 dashboards and draggable layouts.
+</p>
 
-[![npm version](https://badge.fury.io/js/vuegridle.svg)](https://www.npmjs.com/package/vuegridle)
-[![Bundlephobia](https://img.shields.io/bundlephobia/minzip/vuegridle)](https://bundlephobia.com/package/vuegridle)
-[![Downloads](https://img.shields.io/npm/dt/vuegridle.svg)](https://www.npmjs.com/package/vuegridle)
-[![License](https://img.shields.io/npm/l/vuegridle.svg)](https://github.com/FrankieSR/VueGridle/blob/main/LICENSE)
-
----
+<p align="center">
+    <a href="https://www.npmjs.com/package/vuegridle"><img alt="npm version" src="https://img.shields.io/npm/v/vuegridle?label=npm"></a>
+    <a href="https://bundlephobia.com/package/vuegridle"><img alt="minified gzip bundle size" src="https://img.shields.io/bundlephobia/minzip/vuegridle?label=minzip"></a>
+    <a href="https://www.npmjs.com/package/vuegridle"><img alt="monthly npm downloads" src="https://img.shields.io/npm/dm/vuegridle?label=downloads"></a>
+    <a href="https://github.com/FrankieSR/VueGridle/blob/main/LICENSE"><img alt="license" src="https://img.shields.io/npm/l/vuegridle?label=license"></a>
+    <a href="https://frankiesr.github.io/VueGridle/"><img alt="documentation" src="https://img.shields.io/badge/docs-online-6ee7b7"></a>
+</p>
 
 ## Why VueGridle
 

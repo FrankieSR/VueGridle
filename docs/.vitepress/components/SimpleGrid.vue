@@ -96,7 +96,9 @@
     };
 
     const onDrag = (nodeId: string, x: number, y: number) => {
-        // addLog(`[${nodeId}] Dragging to x: ${x}, y: ${y}`);
+        void nodeId;
+        void x;
+        void y;
     };
 
     const onDragStop = (nodeId: string, x: number, y: number) => {
@@ -108,7 +110,11 @@
     };
 
     const onResize = (nodeId: string, x: number, y: number, w: number, h: number) => {
-        // addLog(`[${nodeId}] Resizing to x: ${x}, y: ${y}, w: ${w}, h: ${h}`);
+        void nodeId;
+        void x;
+        void y;
+        void w;
+        void h;
     };
 
     const onResizeStop = (nodeId: string, x: number, y: number, w: number, h: number) => {
