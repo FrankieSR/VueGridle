@@ -1,5 +1,5 @@
-import { ref, computed, inject, type Ref } from 'vue';
-import { gridSnap, checkCollision, isCollision } from '@/utils/gridUtils';
+import { ref, computed, inject, onUnmounted, type Ref } from 'vue';
+import { gridSnapWithinBounds, checkCollision, isCollision } from '@/utils/gridUtils';
 import { clamp, getClientCoordinates } from '@/utils/helpers';
 import { addGlobalListeners, removeGlobalListeners } from '@/utils/eventListeners';
 import {
@@ -17,7 +17,11 @@ export function useGridResize(
     emit: GridItemEmits,
 ): GridResize {
     const DEFAULT_MIN_SIZE = 50;
-    const gridContext = inject<GridContext>('gridContext')!;
+    const gridContext = inject<GridContext>('gridContext');
+
+    if (!gridContext) {
+        throw new Error('VueGridle: GridItem must be rendered inside a Grid component.');
+    }
 
     const isResizing = ref(false);
     const resizeDirection = ref<string | null>(null);
@@ -100,11 +104,23 @@ export function useGridResize(
             newRect.h = clamp(bottomEdge - newRect.y, minHeight, maxHeight);
         }
 
+        const gridCellSize = gridContext.gridCellSize.value;
+        const snappedW = props.freeDrag
+            ? newRect.w
+            : gridSnapWithinBounds(newRect.w, minWidth, maxWidth, gridCellSize);
+        const snappedH = props.freeDrag
+            ? newRect.h
+            : gridSnapWithinBounds(newRect.h, minHeight, maxHeight, gridCellSize);
+
         const snappedRect = {
-            x: props.freeDrag ? newRect.x : gridSnap(newRect.x, gridContext.gridCellSize.value),
-            y: props.freeDrag ? newRect.y : gridSnap(newRect.y, gridContext.gridCellSize.value),
-            w: props.freeDrag ? newRect.w : gridSnap(newRect.w, gridContext.gridCellSize.value),
-            h: props.freeDrag ? newRect.h : gridSnap(newRect.h, gridContext.gridCellSize.value),
+            x: props.freeDrag
+                ? newRect.x
+                : gridSnapWithinBounds(newRect.x, 0, gridContext.gridWidth.value - snappedW, gridCellSize),
+            y: props.freeDrag
+                ? newRect.y
+                : gridSnapWithinBounds(newRect.y, 0, gridContext.gridHeight.value - snappedH, gridCellSize),
+            w: snappedW,
+            h: snappedH,
         };
 
         let collidingIds: string[] = [];
@@ -182,6 +198,23 @@ export function useGridResize(
             h: size.value.h,
         });
     };
+
+    onUnmounted(() => {
+        if (rafId !== null) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+        }
+
+        latestEvent = null;
+        removeGlobalListeners(onMouseMove, stopResize);
+
+        if (isResizing.value) {
+            isResizing.value = false;
+            resizeDirection.value = null;
+            gridContext.isManipulating.value = false;
+            gridContext.clearActiveItem();
+        }
+    });
 
     return {
         isResizing,

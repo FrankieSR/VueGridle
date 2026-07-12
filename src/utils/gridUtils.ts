@@ -19,6 +19,29 @@ let lastNodesHash = 0;
 export const gridSnap = (value: number, gridSize: number): number =>
     Math.round(value / gridSize) * gridSize;
 
+export const gridSnapWithinBounds = (
+    value: number,
+    min: number,
+    max: number,
+    gridSize: number,
+): number => {
+    const boundedMax = Math.max(min, max);
+
+    if (gridSize <= 0) {
+        return Math.max(min, Math.min(value, boundedMax));
+    }
+
+    const snapped = gridSnap(value, gridSize);
+    const minSnap = Math.ceil(min / gridSize) * gridSize;
+    const maxSnap = Math.floor(boundedMax / gridSize) * gridSize;
+
+    if (maxSnap < minSnap) {
+        return Math.max(min, Math.min(snapped, boundedMax));
+    }
+
+    return Math.max(minSnap, Math.min(snapped, maxSnap));
+};
+
 /**
  * Checks if two rectangles intersect.
  *

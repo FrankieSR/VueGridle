@@ -82,19 +82,25 @@
     cursor: grab;
     background-color: var(--grid-item-bg-color);
     transition: var(--grid-item-transition);
+    transform: translate3d(
+            var(--vuegridle-x, 0px),
+            calc(var(--vuegridle-y, 0px) + var(--vuegridle-hover-offset, 0px)),
+            0
+        )
+        scale(var(--vuegridle-scale, 1));
     will-change: transform, box-shadow;
     user-select: none;
 }
 
 .vuegridle-grid-item:hover {
     box-shadow: var(--grid-item-shadow);
-    transform: translateY(var(--grid-item-hover-lift));
+    --vuegridle-hover-offset: var(--grid-item-hover-lift);
 }
 
 .vuegridle-dragging {
     opacity: var(--grid-item-dragging-opacity);
     cursor: grabbing;
-    transform: scale(var(--grid-item-dragging-scale));
+    --vuegridle-scale: var(--grid-item-dragging-scale);
     box-shadow: var(--grid-item-dragging-shadow);
 }
 

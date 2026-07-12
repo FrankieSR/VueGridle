@@ -1,4 +1,4 @@
-import { ref, computed, inject, watch, type ComputedRef, type Ref } from 'vue';
+import { ref, computed, inject, watch, type ComputedRef, type Ref, type CSSProperties } from 'vue';
 import { gridSnap } from '@/utils/gridUtils';
 import {
     type GridItemProps,
@@ -9,7 +9,11 @@ import {
 } from '@/types/gridTypes';
 
 export function useGridState(props: GridItemProps, emit: GridItemEmits): GridState {
-    const gridContext = inject<GridContext>('gridContext')!;
+    const gridContext = inject<GridContext>('gridContext');
+
+    if (!gridContext) {
+        throw new Error('VueGridle: GridItem must be rendered inside a Grid component.');
+    }
 
     const position: Ref<{ x: number; y: number }> = ref({
         x: props.x ?? 0,
@@ -26,15 +30,11 @@ export function useGridState(props: GridItemProps, emit: GridItemEmits): GridSta
         () => gridContext.activeItemId.value === props.nodeId,
     );
 
-    const itemStyle: ComputedRef<{
-        width: string;
-        height: string;
-        transform: string;
-        zIndex: number;
-    }> = computed(() => ({
+    const itemStyle: ComputedRef<CSSProperties> = computed(() => ({
         width: `${size.value.w}px`,
         height: `${size.value.h}px`,
-        transform: `translate3d(${position.value.x}px, ${position.value.y}px, 0)`,
+        '--vuegridle-x': `${position.value.x}px`,
+        '--vuegridle-y': `${position.value.y}px`,
         zIndex: props.z ?? 1,
     }));
 

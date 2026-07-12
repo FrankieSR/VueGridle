@@ -1,5 +1,5 @@
-import { ref, inject, type Ref } from 'vue';
-import { gridSnap, checkCollision, isCollision } from '@/utils/gridUtils';
+import { ref, inject, onUnmounted, type Ref } from 'vue';
+import { gridSnapWithinBounds, checkCollision, isCollision } from '@/utils/gridUtils';
 import { clamp, getClientCoordinates } from '@/utils/helpers';
 import { addGlobalListeners, removeGlobalListeners } from '@/utils/eventListeners';
 import {
@@ -17,7 +17,11 @@ export function useGridDrag(
     emit: GridItemEmits,
 ): GridDrag {
     const DRAG_THRESHOLD = 5;
-    const gridContext = inject<GridContext>('gridContext')!;
+    const gridContext = inject<GridContext>('gridContext');
+
+    if (!gridContext) {
+        throw new Error('VueGridle: GridItem must be rendered inside a Grid component.');
+    }
 
     const isDragging = ref(false);
     const dragInitiated = ref(false);
@@ -62,11 +66,17 @@ export function useGridDrag(
         if (!dragInitiated.value) return;
 
         const { w, h } = size.value;
-        let newX = clamp(startPosition.value.x + deltaX, 0, gridContext.gridWidth.value - w);
-        let newY = clamp(startPosition.value.y + deltaY, 0, gridContext.gridHeight.value - h);
+        const maxX = gridContext.gridWidth.value - w;
+        const maxY = gridContext.gridHeight.value - h;
+        const nextX = startPosition.value.x + deltaX;
+        const nextY = startPosition.value.y + deltaY;
 
-        newX = props.freeDrag ? newX : gridSnap(newX, gridContext.gridCellSize.value);
-        newY = props.freeDrag ? newY : gridSnap(newY, gridContext.gridCellSize.value);
+        const newX = props.freeDrag
+            ? clamp(nextX, 0, maxX)
+            : gridSnapWithinBounds(nextX, 0, maxX, gridContext.gridCellSize.value);
+        const newY = props.freeDrag
+            ? clamp(nextY, 0, maxY)
+            : gridSnapWithinBounds(nextY, 0, maxY, gridContext.gridCellSize.value);
 
         if (
             checkCollision(props.nodeId, newX, newY, w, h, props.allNodes, props.freeDrag ?? false)
@@ -134,6 +144,23 @@ export function useGridDrag(
 
         dragInitiated.value = false;
     };
+
+    onUnmounted(() => {
+        if (rafId !== null) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+        }
+
+        latestEvent = null;
+        removeGlobalListeners(onMouseMove, stopDrag);
+
+        if (isDragging.value) {
+            isDragging.value = false;
+            dragInitiated.value = false;
+            gridContext.isManipulating.value = false;
+            gridContext.clearActiveItem();
+        }
+    });
 
     return {
         isDragging,

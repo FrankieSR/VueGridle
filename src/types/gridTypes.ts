@@ -1,4 +1,4 @@
-import { type Ref, type ComputedRef } from 'vue';
+import { type Ref, type ComputedRef, type CSSProperties } from 'vue';
 
 export interface Rect {
     x: number;
@@ -72,7 +72,7 @@ export interface GridState {
     size: Ref<{ w: number; h: number }>;
     isActive: ComputedRef<boolean>;
     isNearActive: ComputedRef<boolean>;
-    itemStyle: ComputedRef<{ width: string; height: string; transform: string; zIndex: number }>;
+    itemStyle: ComputedRef<CSSProperties>;
 }
 
 export interface GridDrag {
@@ -100,7 +100,7 @@ export type GridItemReturn = {
     isResizing: Ref<boolean>;
     isActive: ComputedRef<boolean>;
     isNearActive: ComputedRef<boolean>;
-    itemStyle: ComputedRef<{ width: string; height: string; transform: string; zIndex: number }>;
+    itemStyle: ComputedRef<CSSProperties>;
     startDrag: (event: MouseEvent | TouchEvent) => void;
     startResize: (direction: string, event: MouseEvent | TouchEvent) => void;
     activate: () => void;

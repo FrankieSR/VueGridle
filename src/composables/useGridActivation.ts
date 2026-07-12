@@ -19,7 +19,11 @@ export function useGridActivation(
         onMouseUp?: () => void;
     } = {},
 ): GridActivation {
-    const gridContext = inject<GridContext>('gridContext')!;
+    const gridContext = inject<GridContext>('gridContext');
+
+    if (!gridContext) {
+        throw new Error('VueGridle: GridItem must be rendered inside a Grid component.');
+    }
     const { position, size, onMouseMove, onMouseUp } = options;
 
     const setActiveItem = () => {
