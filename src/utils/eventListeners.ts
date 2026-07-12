@@ -1,19 +1,17 @@
 export function addGlobalListeners(
-    onMouseMove: (event: MouseEvent | TouchEvent) => void,
-    onMouseUp: () => void,
+    onPointerMove: (event: PointerEvent) => void,
+    onPointerUp: () => void,
 ) {
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('touchmove', onMouseMove);
-    window.addEventListener('mouseup', onMouseUp);
-    window.addEventListener('touchend', onMouseUp);
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
 }
 
 export function removeGlobalListeners(
-    onMouseMove: (event: MouseEvent | TouchEvent) => void,
-    onMouseUp: () => void,
+    onPointerMove: (event: PointerEvent) => void,
+    onPointerUp: () => void,
 ) {
-    window.removeEventListener('mousemove', onMouseMove);
-    window.removeEventListener('touchmove', onMouseMove);
-    window.removeEventListener('mouseup', onMouseUp);
-    window.removeEventListener('touchend', onMouseUp);
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', onPointerUp);
+    window.removeEventListener('pointercancel', onPointerUp);
 }

@@ -15,8 +15,8 @@ export interface GridNode {
 }
 
 export interface ContextItem {
-    onMouseMove: (event: MouseEvent | TouchEvent) => void;
-    onMouseUp: () => void;
+    onPointerMove: (event: PointerEvent) => void;
+    onPointerUp: () => void;
     id: string;
     rect: Rect;
 }
@@ -81,7 +81,7 @@ export interface GridState {
 
 export interface GridDrag {
     isDragging: Ref<boolean>;
-    startDrag: (event: MouseEvent | TouchEvent) => void;
+    startDrag: (event: PointerEvent) => void;
 }
 
 export interface GridItemSlotProps {
@@ -90,7 +90,7 @@ export interface GridItemSlotProps {
 
 export interface GridResize {
     isResizing: Ref<boolean>;
-    startResize: (direction: string, event: MouseEvent | TouchEvent) => void;
+    startResize: (direction: string, event: PointerEvent) => void;
     resizeHandles: readonly ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
 }
 
@@ -105,8 +105,8 @@ export type GridItemReturn = {
     isActive: ComputedRef<boolean>;
     isNearActive: ComputedRef<boolean>;
     itemStyle: ComputedRef<CSSProperties>;
-    startDrag: (event: MouseEvent | TouchEvent) => void;
-    startResize: (direction: string, event: MouseEvent | TouchEvent) => void;
+    startDrag: (event: PointerEvent) => void;
+    startResize: (direction: string, event: PointerEvent) => void;
     activate: () => void;
     resizeHandles: readonly ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
 };

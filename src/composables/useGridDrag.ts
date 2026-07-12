@@ -30,10 +30,13 @@ export function useGridDrag(
     const startPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 });
 
     let rafId: number | null = null;
-    let latestEvent: MouseEvent | TouchEvent | null = null;
+    let latestEvent: PointerEvent | null = null;
 
-    const startDrag = (event: MouseEvent | TouchEvent) => {
+    const startDrag = (event: PointerEvent) => {
         if (!props.draggable) return;
+        if (event.button !== 0) return;
+
+        event.preventDefault();
 
         const { clientX, clientY } = getClientCoordinates(event);
         startMouse.value = { x: clientX, y: clientY };
@@ -41,10 +44,10 @@ export function useGridDrag(
 
         isDragging.value = true;
 
-        addGlobalListeners(onMouseMove, stopDrag);
+        addGlobalListeners(onPointerMove, stopDrag);
     };
 
-    const updateDrag = (event: MouseEvent | TouchEvent) => {
+    const updateDrag = (event: PointerEvent) => {
         if (!isDragging.value) return;
 
         const { clientX, clientY } = getClientCoordinates(event);
@@ -56,8 +59,8 @@ export function useGridDrag(
             dragInitiated.value = true;
 
             gridContext.setActiveItem({
-                onMouseMove,
-                onMouseUp: stopDrag,
+                onPointerMove,
+                onPointerUp: stopDrag,
                 id: props.nodeId,
                 rect: { ...position.value, ...size.value },
             });
@@ -103,7 +106,7 @@ export function useGridDrag(
         }
     };
 
-    const onMouseMove = (event: MouseEvent | TouchEvent) => {
+    const onPointerMove = (event: PointerEvent) => {
         latestEvent = event;
         if (rafId === null && isDragging.value) {
             rafId = requestAnimationFrame(() => {
@@ -128,7 +131,7 @@ export function useGridDrag(
         }
 
         latestEvent = null;
-        removeGlobalListeners(onMouseMove, stopDrag);
+        removeGlobalListeners(onPointerMove, stopDrag);
         gridContext.clearActiveItem();
 
         if (dragInitiated.value) {
@@ -152,7 +155,7 @@ export function useGridDrag(
         }
 
         latestEvent = null;
-        removeGlobalListeners(onMouseMove, stopDrag);
+        removeGlobalListeners(onPointerMove, stopDrag);
 
         if (isDragging.value) {
             isDragging.value = false;

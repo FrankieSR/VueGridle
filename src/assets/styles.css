@@ -88,6 +88,7 @@
     );
     will-change: transform, box-shadow;
     user-select: none;
+    touch-action: none;
 }
 
 .vuegridle-grid-item:hover {
@@ -114,6 +115,7 @@
     border-radius: 50%;
     opacity: var(--resize-handle-opacity);
     transition: var(--resize-handle-transition);
+    touch-action: none;
 }
 
 .resize-handle:hover {

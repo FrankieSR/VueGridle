@@ -35,10 +35,13 @@ export function useGridResize(
     const directionSet = computed(() => new Set<string>((resizeDirection.value || '').split('-')));
 
     let rafId: number | null = null;
-    let latestEvent: MouseEvent | TouchEvent | null = null;
+    let latestEvent: PointerEvent | null = null;
 
-    const startResize = (direction: string, event: MouseEvent | TouchEvent) => {
+    const startResize = (direction: string, event: PointerEvent) => {
         if (!props.resizable) return;
+        if (event.button !== 0) return;
+
+        event.preventDefault();
 
         isResizing.value = true;
         gridContext.isManipulating.value = true;
@@ -51,17 +54,17 @@ export function useGridResize(
         startPosition.value = { ...position.value };
 
         gridContext.setActiveItem({
-            onMouseMove,
-            onMouseUp: stopResize,
+            onPointerMove,
+            onPointerUp: stopResize,
             id: props.nodeId,
             rect: { ...position.value, w: size.value.w, h: size.value.h },
         });
 
-        addGlobalListeners(onMouseMove, stopResize);
+        addGlobalListeners(onPointerMove, stopResize);
         emit('resizeStart');
     };
 
-    const updateResize = (event: MouseEvent | TouchEvent) => {
+    const updateResize = (event: PointerEvent) => {
         if (!isResizing.value) return;
 
         const { clientX, clientY } = getClientCoordinates(event);
@@ -165,7 +168,7 @@ export function useGridResize(
         }
     };
 
-    const onMouseMove = (event: MouseEvent | TouchEvent) => {
+    const onPointerMove = (event: PointerEvent) => {
         latestEvent = event;
         if (rafId === null && isResizing.value) {
             rafId = requestAnimationFrame(() => {
@@ -189,7 +192,7 @@ export function useGridResize(
             rafId = null;
         }
         latestEvent = null;
-        removeGlobalListeners(onMouseMove, stopResize);
+        removeGlobalListeners(onPointerMove, stopResize);
         gridContext.clearActiveItem();
 
         emit('resizeStop', position.value.x, position.value.y, size.value.w, size.value.h);
@@ -208,7 +211,7 @@ export function useGridResize(
         }
 
         latestEvent = null;
-        removeGlobalListeners(onMouseMove, stopResize);
+        removeGlobalListeners(onPointerMove, stopResize);
 
         if (isResizing.value) {
             isResizing.value = false;

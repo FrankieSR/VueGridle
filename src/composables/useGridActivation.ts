@@ -15,8 +15,8 @@ export function useGridActivation(
     options: {
         position?: Ref<{ x: number; y: number }>;
         size?: Ref<{ w: number; h: number }>;
-        onMouseMove?: (event: MouseEvent | TouchEvent) => void;
-        onMouseUp?: () => void;
+        onPointerMove?: (event: PointerEvent) => void;
+        onPointerUp?: () => void;
     } = {},
 ): GridActivation {
     const gridContext = inject(gridContextKey);
@@ -24,7 +24,7 @@ export function useGridActivation(
     if (!gridContext) {
         throw new Error('VueGridle: GridItem must be rendered inside a Grid component.');
     }
-    const { position, size, onMouseMove, onMouseUp } = options;
+    const { position, size, onPointerMove, onPointerUp } = options;
 
     const setActiveItem = () => {
         const rect = {
@@ -35,8 +35,8 @@ export function useGridActivation(
         };
 
         gridContext.setActiveItem({
-            onMouseMove: onMouseMove ?? (() => {}),
-            onMouseUp: onMouseUp ?? (() => {}),
+            onPointerMove: onPointerMove ?? (() => {}),
+            onPointerUp: onPointerUp ?? (() => {}),
             id: props.nodeId,
             rect,
         });

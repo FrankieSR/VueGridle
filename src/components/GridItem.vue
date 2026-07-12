@@ -9,8 +9,7 @@
             'vuegridle-highlight': isNearActive,
         }"
         :style="itemStyle"
-        @mousedown="startDrag"
-        @touchstart="startDrag"
+        @pointerdown="startDrag"
         @click="activate"
         @contextmenu.prevent
         @dragstart.prevent
@@ -22,8 +21,7 @@
                 :key="handle"
                 class="resize-handle"
                 :class="handle"
-                @mousedown.stop="startResize(handle, $event)"
-                @touchstart.stop="startResize(handle, $event)"
+                @pointerdown.stop="startResize(handle, $event)"
             ></div>
         </template>
     </div>

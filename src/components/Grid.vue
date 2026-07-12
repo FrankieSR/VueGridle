@@ -5,10 +5,9 @@
         :class="{ 'vuegridle-grid-active': isManipulating }"
         :style="{ '--grid-cell-size': `${gridCellSize}px` }"
         @dragover.prevent
-        @mousemove="handlePointerMove"
-        @touchmove.prevent="handlePointerMove"
-        @mouseup="handlePointerUp"
-        @touchend="handlePointerUp"
+        @pointermove="handlePointerMove"
+        @pointerup="handlePointerUp"
+        @pointercancel="handlePointerUp"
     >
         <slot :gridWidth="gridWidth" :gridHeight="gridHeight" :gridCellSize="gridCellSize" />
     </div>
@@ -36,8 +35,8 @@ const activeItemId = ref<string | null>(null);
 const activeItemRect = ref<Rect | null>(null);
 
 const activeItem = ref<{
-    onMouseMove: (event: MouseEvent | TouchEvent) => void;
-    onMouseUp: () => void;
+    onPointerMove: (event: PointerEvent) => void;
+    onPointerUp: () => void;
 } | null>(null);
 
 let rAF: number | null = null;
@@ -51,7 +50,7 @@ const updateSize = () => {
 };
 
 const setActiveItem = (item: ContextItem) => {
-    activeItem.value = { onMouseMove: item.onMouseMove, onMouseUp: item.onMouseUp };
+    activeItem.value = { onPointerMove: item.onPointerMove, onPointerUp: item.onPointerUp };
     activeItemId.value = item.id;
     activeItemRect.value = item.rect;
 };
@@ -80,11 +79,11 @@ provide(gridContextKey, {
     activeItemRect,
 });
 
-const handlePointerMove = (event: MouseEvent | TouchEvent) => {
+const handlePointerMove = (event: PointerEvent) => {
     if (rAF === null && activeItem.value) {
         rAF = requestAnimationFrame(() => {
             if (activeItem.value) {
-                activeItem.value.onMouseMove(event);
+                activeItem.value.onPointerMove(event);
             }
             rAF = null;
         });
@@ -93,7 +92,7 @@ const handlePointerMove = (event: MouseEvent | TouchEvent) => {
 
 const handlePointerUp = () => {
     if (activeItem.value) {
-        activeItem.value.onMouseUp();
+        activeItem.value.onPointerUp();
     }
 };
 
