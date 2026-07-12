@@ -1,8 +1,8 @@
 import { inject, onMounted, onUnmounted, watch, type Ref } from 'vue';
+import { gridContextKey } from '@/context/gridContext';
 import {
     type GridItemProps,
     type GridItemEmits,
-    type GridContext,
     type GridActivation,
 } from '@/types/gridTypes';
 
@@ -19,7 +19,7 @@ export function useGridActivation(
         onMouseUp?: () => void;
     } = {},
 ): GridActivation {
-    const gridContext = inject<GridContext>('gridContext');
+    const gridContext = inject(gridContextKey);
 
     if (!gridContext) {
         throw new Error('VueGridle: GridItem must be rendered inside a Grid component.');

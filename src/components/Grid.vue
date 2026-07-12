@@ -17,6 +17,7 @@
 <script lang="ts" setup>
 import { ref, computed, provide, onMounted, onUnmounted } from 'vue';
 import { type GridContext, type Rect, type ContextItem, type GridNode } from '@/types/gridTypes';
+import { gridContextKey } from '@/context/gridContext';
 
 const props = defineProps<{
     gridCellSize?: number;
@@ -65,7 +66,7 @@ const clearActiveItem = () => {
     activeItemRect.value = null;
 };
 
-provide<GridContext>('gridContext', {
+provide(gridContextKey, {
     gridContainer,
     gridWidth,
     gridHeight,

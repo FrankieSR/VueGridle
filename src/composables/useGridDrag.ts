@@ -2,10 +2,10 @@ import { ref, computed, inject, onUnmounted, type Ref } from 'vue';
 import { gridSnapWithinBounds, checkCollision, isCollision } from '@/utils/gridUtils';
 import { clamp, getClientCoordinates } from '@/utils/helpers';
 import { addGlobalListeners, removeGlobalListeners } from '@/utils/eventListeners';
+import { gridContextKey } from '@/context/gridContext';
 import {
     type GridItemProps,
     type GridItemEmits,
-    type GridContext,
     type GridNode,
     type GridDrag,
 } from '@/types/gridTypes';
@@ -17,7 +17,7 @@ export function useGridDrag(
     emit: GridItemEmits,
 ): GridDrag {
     const DRAG_THRESHOLD = 5;
-    const gridContext = inject<GridContext>('gridContext');
+    const gridContext = inject(gridContextKey);
 
     if (!gridContext) {
         throw new Error('VueGridle: GridItem must be rendered inside a Grid component.');
