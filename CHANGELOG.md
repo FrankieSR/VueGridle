@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.1](https://github.com/FrankieSR/VueGridle/compare/v1.1.0...v1.1.1) (2026-07-13)
+
+### Performance
+
+- add a spatial bucket index for collision checks in larger layouts
+- avoid hashing every node on each collision check
+- skip drag and resize collision work when the snapped rect has not changed
+- avoid emitting duplicate `collisionDetected` events for the same collision set during one interaction
+
+### Tests
+
+- cover spatial collision index behavior for `100`, `250`, and `500` item layouts
+- cover skipped drag updates while pointer movement remains inside the same snapped grid cell
+- cover duplicate `collisionDetected` suppression
+
+### Documentation
+
+- add a performance benchmark example for `100`, `250`, and `500` item layouts
+- keep the docs home demo items fully inside the visible canvas
+- centralize docs logo assets and update README badge labels
+
 ## [1.1.0](https://github.com/FrankieSR/VueGridle/compare/v1.0.2...v1.1.0) (2026-07-13)
 
 ### Features
