@@ -4,7 +4,7 @@ outline: deep
 
 # Drag Outside Example
 
-Track the active drag item and react when users drop or release it outside your desired region.
+Drag a source item into a visible grid canvas and create a new controlled layout item.
 
 ---
 
@@ -17,39 +17,39 @@ Track the active drag item and react when users drop or release it outside your 
 ```vue
 <template>
     <div class="drag-outside-container">
-        <div class="grid-wrapper">
-            <Grid :gridCellSize="50" :layout="layout" class="grid-demo">
-                <GridItem
-                    v-for="item in layout"
-                    :key="item.id"
-                    :nodeId="item.id"
-                    :x="item.grid.x"
-                    :y="item.grid.y"
-                    :w="item.grid.w"
-                    :h="item.grid.h"
-                    :draggable="true"
-                    v-model="item.grid"
-                    :minWidth="100"
-                    :minHeight="100"
-                    @drag="(x, y) => onDrag(item.id, x, y)"
-                    @drop="(nodeId, x, y) => onDrop(nodeId, x, y)"
+        <div class="drag-outside-inner-box">
+            <div class="source-zone">
+                <div
+                    class="source-item"
+                    draggable="true"
+                    @dragstart="startDragging"
+                    @dragend="endDragging"
                 >
-                    <div class="grid-item-content">{{ item.label }}</div>
-                </GridItem>
-            </Grid>
-        </div>
+                    Drag Me
+                </div>
+            </div>
 
-        <div
-            class="drop-zone"
-            :class="{ 'drop-zone-active': isDraggingOver }"
-            @dragover.prevent="isDraggingOver = true"
-            @dragleave="isDraggingOver = false"
-            @drop="handleDropOutside"
-        >
-            <p>Drop here to remove</p>
-            <ul v-if="removedItems.length">
-                <li v-for="item in removedItems" :key="item.id">{{ item.label }}</li>
-            </ul>
+            <div class="grid-wrapper">
+                <Grid
+                    :gridCellSize="50"
+                    :layout="layout"
+                    class="grid-demo drag-outside-grid"
+                    @dragover.prevent
+                    @drop="handleDropInGrid"
+                >
+                    <GridItem
+                        v-for="item in layout"
+                        :key="item.id"
+                        :nodeId="item.id"
+                        v-model="item.grid"
+                        :minWidth="100"
+                        :minHeight="100"
+                        :ariaLabel="`${item.label} widget`"
+                    >
+                        <div class="grid-item-content">{{ item.label }}</div>
+                    </GridItem>
+                </Grid>
+            </div>
         </div>
     </div>
 </template>
@@ -59,108 +59,88 @@ Track the active drag item and react when users drop or release it outside your 
     import { Grid, GridItem } from 'vuegridle';
     import 'vuegridle/style.css';
 
-    const layout = ref([
-        { id: 'item-1', label: 'Item 1', grid: { x: 50, y: 50, w: 100, h: 100 } },
-        { id: 'item-2', label: 'Item 2', grid: { x: 200, y: 50, w: 100, h: 100 } },
-        { id: 'item-3', label: 'Item 3', grid: { x: 50, y: 200, w: 100, h: 100 } },
-    ]);
+    const layout = ref([{ id: 'item-1', label: 'Item 1', grid: { x: 50, y: 50, w: 100, h: 100 } }]);
 
-    const removedItems = ref([]);
-    const isDraggingOver = ref(false);
-    let draggedItemId = null;
+    let isDragging = false;
 
-    const onDrag = (id: string, x: number, y: number) => {
-        draggedItemId = id;
+    const startDragging = (event: DragEvent) => {
+        isDragging = true;
+        event.dataTransfer?.setData('text/plain', 'new-item');
     };
 
-    const onDrop = (nodeId: string, x: number, y: number) => {
-        draggedItemId = null;
+    const endDragging = () => {
+        isDragging = false;
     };
 
-    const handleDropOutside = (event: DragEvent) => {
+    const handleDropInGrid = (event: DragEvent) => {
         event.preventDefault();
-        isDraggingOver.value = false;
-
-        if (draggedItemId) {
-            const index = layout.value.findIndex((item) => item.id === draggedItemId);
-            if (index !== -1) {
-                const [removedItem] = layout.value.splice(index, 1);
-                removedItems.value.push(removedItem);
-                draggedItemId = null;
-            }
+        if (isDragging) {
+            const gridElement = event.currentTarget as HTMLElement;
+            const gridRect = gridElement.getBoundingClientRect();
+            const x = Math.max(0, Math.round((event.clientX - gridRect.left - 50) / 50) * 50);
+            const y = Math.max(0, Math.round((event.clientY - gridRect.top - 50) / 50) * 50);
+            const newId = `item-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+            layout.value.push({
+                id: newId,
+                label: `Item ${layout.value.length + 1}`,
+                grid: { x, y, w: 100, h: 100 },
+            });
+            isDragging = false;
         }
     };
 </script>
 
 <style scoped>
     .drag-outside-container {
-        display: flex;
-        align-items: flex-start;
-        padding: 16px;
-        gap: 20px;
+        padding: 0;
+    }
+
+    .drag-outside-inner-box {
+        display: grid;
+        grid-template-columns: 180px minmax(0, 1fr);
+        gap: 24px;
+        margin-bottom: 24px;
+        align-items: start;
     }
 
     .grid-wrapper {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        min-width: 0;
     }
 
-    .grid-demo {
-        width: 400px;
-        height: 400px;
-        border: 1px solid var(--grid-item-border-color);
-        position: relative;
-    }
-
-    .grid-item-content {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(96, 165, 250, 0.1);
-        color: #fff;
-        font-weight: bold;
-        border-radius: 6px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .drop-zone {
-        width: 200px;
-        height: 400px;
+    .source-zone {
+        flex: 0 0 180px;
+        height: 100px;
         background: #2d2d2d;
-        border: 2px dashed #666;
         border-radius: 8px;
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
         color: #d4d4d4;
-        transition: all 0.2s ease;
     }
 
-    .drop-zone-active {
-        background: #3e63dd;
-        border-color: #89b4fa;
-        color: #fff;
+    .source-item {
+        padding: 16px 16px;
+        background: #6ee7b7;
+        color: #1e2229;
+        border-radius: 6px;
+        cursor: grab;
+        user-select: none;
     }
 
-    .drop-zone p {
-        margin: 0;
-        font-size: 16px;
+    .source-item:active {
+        cursor: grabbing;
     }
 
-    .drop-zone ul {
-        list-style: none;
-        padding: 0;
-        margin-top: 10px;
-        text-align: center;
+    .drag-outside-grid {
+        width: 100%;
+        max-width: 560px;
+        height: 360px;
     }
 
-    .drop-zone li {
-        padding: 5px 0;
-        font-size: 14px;
+    @media only screen and (max-width: 760px) {
+        .drag-outside-inner-box {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 ```
