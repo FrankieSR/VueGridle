@@ -16,24 +16,24 @@ hero:
           link: 'https://github.com/FrankieSR/VueGridle'
 
 features:
+    - icon: 🧭
+      title: Controlled Layout
+      details: Keep dashboard layout in your app state with v-model.
     - icon: 🖱️
-      title: Drag & Drop Grid Snapping
-      details: Snap items to the grid for precise layouts.
-    - icon: 🌍
-      title: Free Movement Drag
-      details: Enjoy optional free-form dragging without grid constraints.
-    - icon: 📏
-      title: Resizable
-      details: Easily resize items with min/max limits for perfect control.
+      title: Pointer Interactions
+      details: Drag and resize widgets with snapping or free movement.
+    - icon: ⌨️
+      title: Keyboard Accessible
+      details: Focus items, move with arrows, and resize with Shift + arrows.
     - icon: ⚠️
       title: Collision Detection
-      details: Get real-time alerts when items overlap.
+      details: Pass layout once to Grid and react to item overlap events.
     - icon: 🛠️
       title: TypeScript
-      details: Strictly typed for cleaner code and fewer bugs.
+      details: Typed components and exported layout types for Vue 3 apps.
     - icon: 🎨
-      title: Customizable
-      details: Tweak everything via props, events, and CSS variables.
+      title: Themeable
+      details: Customize the grid with CSS variables and your own widget UI.
 ---
 
 ---
@@ -67,12 +67,12 @@ features:
 }
 
 .app-container-content {
-  position: relative;
-  z-index: 1;
-  background: var(--vp-button-brand-bg);
-  border-radius: 8px;
-  padding: 20px;
-  color: #fff;
+    position: relative;
+    z-index: 1;
+    background: var(--vp-button-brand-bg);
+    border-radius: 8px;
+    padding: 20px;
+    color: #fff;
 }
 
 .demo-title {

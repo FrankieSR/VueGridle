@@ -2,7 +2,9 @@
 outline: deep
 ---
 
-# 01. Basic Example
+# Basic Example
+
+Use this as the smallest practical setup: one controlled `layout` array, one `Grid`, and one `GridItem` per layout entry.
 
 ---
 
@@ -49,6 +51,8 @@ outline: deep
 
 <script setup lang="ts">
     import { ref } from 'vue';
+    import { Grid, GridItem } from 'vuegridle';
+    import 'vuegridle/style.css';
 
     const layout = ref([
         { id: 'item-1', label: 'Node 1', grid: { x: 0, y: 0, w: 100, h: 100 } },
@@ -137,4 +141,6 @@ outline: deep
 </style>
 ```
 
-View the source code on [GitHub](https://github.com/username/repo/blob/main/path/to/Example01Basic.vue).
+## Source
+
+- [View on GitHub](https://github.com/FrankieSR/VueGridle/blob/main/docs/.vitepress/components/Example01Basic.vue)

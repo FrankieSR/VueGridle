@@ -2,7 +2,9 @@
 outline: deep
 ---
 
-# 02. Drag and Resize Example
+# Drag and Resize Example
+
+Toggle drag and resize behavior at runtime. This is useful for dashboards with an edit mode.
 
 ---
 
@@ -48,6 +50,8 @@ outline: deep
 
 <script setup lang="ts">
     import { ref } from 'vue';
+    import { Grid, GridItem } from 'vuegridle';
+    import 'vuegridle/style.css';
 
     const layout = ref([
         { id: 'item-1', label: 'Item 1', grid: { x: 50, y: 50, w: 100, h: 100 } },
