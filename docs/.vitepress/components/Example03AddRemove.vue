@@ -14,10 +14,13 @@
                 :minWidth="100"
                 :minHeight="100"
                 :ariaLabel="`${item.label} widget`"
+                @item-activated="activeItemId = item.id"
+                @item-deactivated="activeItemId = null"
             >
                 <div class="grid-item-content">
                     <span>{{ item.label }}</span>
                     <button
+                        v-if="activeItemId === item.id"
                         class="remove-button"
                         type="button"
                         @pointerdown.stop
@@ -39,6 +42,7 @@ const layout = ref([
     { id: 'item-2', label: 'Orders', grid: { x: 250, y: 150, w: 150, h: 100 } },
 ]);
 
+const activeItemId = ref<string | null>(null);
 let nextItemNumber = 3;
 
 const addItem = () => {
@@ -55,6 +59,9 @@ const addItem = () => {
 
 const removeItem = (id: string) => {
     layout.value = layout.value.filter((item) => item.id !== id);
+    if (activeItemId.value === id) {
+        activeItemId.value = null;
+    }
 };
 </script>
 
