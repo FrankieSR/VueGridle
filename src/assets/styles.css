@@ -88,6 +88,7 @@
     );
     will-change: transform, box-shadow;
     user-select: none;
+    touch-action: none;
 }
 
 .vuegridle-grid-item:hover {
@@ -114,6 +115,7 @@
     border-radius: 50%;
     opacity: var(--resize-handle-opacity);
     transition: var(--resize-handle-transition);
+    touch-action: none;
 }
 
 .resize-handle:hover {
@@ -151,4 +153,9 @@
     outline: 1px solid var(--grid-item-border-color);
     outline-offset: 0;
     box-shadow: var(--grid-item-active-shadow);
+}
+
+.vuegridle-grid-item:focus-visible {
+    outline: 2px solid var(--resize-handle-bg-color);
+    outline-offset: 2px;
 }

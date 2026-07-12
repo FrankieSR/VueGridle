@@ -1,11 +1,11 @@
-import { ref, inject, onUnmounted, type Ref } from 'vue';
+import { ref, computed, inject, onUnmounted, type Ref } from 'vue';
 import { gridSnapWithinBounds, checkCollision, isCollision } from '@/utils/gridUtils';
 import { clamp, getClientCoordinates } from '@/utils/helpers';
 import { addGlobalListeners, removeGlobalListeners } from '@/utils/eventListeners';
+import { gridContextKey } from '@/context/gridContext';
 import {
     type GridItemProps,
     type GridItemEmits,
-    type GridContext,
     type GridNode,
     type GridDrag,
 } from '@/types/gridTypes';
@@ -17,7 +17,7 @@ export function useGridDrag(
     emit: GridItemEmits,
 ): GridDrag {
     const DRAG_THRESHOLD = 5;
-    const gridContext = inject<GridContext>('gridContext');
+    const gridContext = inject(gridContextKey);
 
     if (!gridContext) {
         throw new Error('VueGridle: GridItem must be rendered inside a Grid component.');
@@ -25,14 +25,18 @@ export function useGridDrag(
 
     const isDragging = ref(false);
     const dragInitiated = ref(false);
+    const allNodes = computed(() => props.allNodes ?? gridContext.allNodes.value);
     const startMouse = ref<{ x: number; y: number }>({ x: 0, y: 0 });
     const startPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 });
 
     let rafId: number | null = null;
-    let latestEvent: MouseEvent | TouchEvent | null = null;
+    let latestEvent: PointerEvent | null = null;
 
-    const startDrag = (event: MouseEvent | TouchEvent) => {
+    const startDrag = (event: PointerEvent) => {
         if (!props.draggable) return;
+        if (event.button !== 0) return;
+
+        event.preventDefault();
 
         const { clientX, clientY } = getClientCoordinates(event);
         startMouse.value = { x: clientX, y: clientY };
@@ -40,10 +44,10 @@ export function useGridDrag(
 
         isDragging.value = true;
 
-        addGlobalListeners(onMouseMove, stopDrag);
+        addGlobalListeners(onPointerMove, stopDrag);
     };
 
-    const updateDrag = (event: MouseEvent | TouchEvent) => {
+    const updateDrag = (event: PointerEvent) => {
         if (!isDragging.value) return;
 
         const { clientX, clientY } = getClientCoordinates(event);
@@ -55,8 +59,8 @@ export function useGridDrag(
             dragInitiated.value = true;
 
             gridContext.setActiveItem({
-                onMouseMove,
-                onMouseUp: stopDrag,
+                onPointerMove,
+                onPointerUp: stopDrag,
                 id: props.nodeId,
                 rect: { ...position.value, ...size.value },
             });
@@ -77,11 +81,10 @@ export function useGridDrag(
         const newY = props.freeDrag
             ? clamp(nextY, 0, maxY)
             : gridSnapWithinBounds(nextY, 0, maxY, gridContext.gridCellSize.value);
+        const nodes = allNodes.value;
 
-        if (
-            checkCollision(props.nodeId, newX, newY, w, h, props.allNodes, props.freeDrag ?? false)
-        ) {
-            const collidingIds = props.allNodes
+        if (checkCollision(props.nodeId, newX, newY, w, h, nodes, props.freeDrag ?? false)) {
+            const collidingIds = nodes
                 .filter(
                     (node: GridNode) =>
                         node.id !== props.nodeId &&
@@ -93,7 +96,7 @@ export function useGridDrag(
 
         if (
             props.freeDrag ||
-            !checkCollision(props.nodeId, newX, newY, w, h, props.allNodes, props.freeDrag ?? false)
+            !checkCollision(props.nodeId, newX, newY, w, h, nodes, props.freeDrag ?? false)
         ) {
             position.value = { x: newX, y: newY };
             if (props.nodeId === gridContext.activeItemId.value) {
@@ -103,7 +106,7 @@ export function useGridDrag(
         }
     };
 
-    const onMouseMove = (event: MouseEvent | TouchEvent) => {
+    const onPointerMove = (event: PointerEvent) => {
         latestEvent = event;
         if (rafId === null && isDragging.value) {
             rafId = requestAnimationFrame(() => {
@@ -128,7 +131,7 @@ export function useGridDrag(
         }
 
         latestEvent = null;
-        removeGlobalListeners(onMouseMove, stopDrag);
+        removeGlobalListeners(onPointerMove, stopDrag);
         gridContext.clearActiveItem();
 
         if (dragInitiated.value) {
@@ -152,7 +155,7 @@ export function useGridDrag(
         }
 
         latestEvent = null;
-        removeGlobalListeners(onMouseMove, stopDrag);
+        removeGlobalListeners(onPointerMove, stopDrag);
 
         if (isDragging.value) {
             isDragging.value = false;

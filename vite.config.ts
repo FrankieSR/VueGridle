@@ -23,6 +23,7 @@ export default defineConfig({
         },
     },
     build: {
+        copyPublicDir: false,
         lib: {
             entry: path.resolve(__dirname, 'src/index.ts'),
             name: 'VueGridle',
@@ -43,7 +44,7 @@ export default defineConfig({
                 },
             },
         },
-        sourcemap: true,
+        sourcemap: false,
         minify: 'terser',
         terserOptions: {
             compress: {

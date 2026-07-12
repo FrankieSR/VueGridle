@@ -2,7 +2,7 @@
     <div class="simple-grid-container">
         <div class="grid-wrapper">
             <button class="add-button" @click="addItem">Add Item</button>
-            <Grid :gridCellSize="50" class="grid-demo">
+            <Grid :gridCellSize="50" :layout="layout" class="grid-demo">
                 <GridItem
                     v-for="item in layout"
                     :key="item.id"
@@ -11,7 +11,6 @@
                     :y="item.grid.y"
                     :w="item.grid.w"
                     :h="item.grid.h"
-                    :allNodes="layout"
                     :draggable="true"
                     v-model="item.grid"
                     :minWidth="100"
@@ -131,4 +130,3 @@ pre {
     word-wrap: break-word;
 }
 </style>
-

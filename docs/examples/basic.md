@@ -14,7 +14,7 @@ outline: deep
 
 ```vue
 <template>
-    <Grid :gridCellSize="50" class="grid-demo">
+    <Grid :gridCellSize="50" :layout="layout" class="grid-demo">
         <GridItem
             v-for="item in layout"
             :key="item.id"
@@ -24,7 +24,6 @@ outline: deep
             :w="item.grid.w"
             :h="item.grid.h"
             :proximity="100"
-            :allNodes="layout"
             :draggable="true"
             :resizable="true"
             :free-drag="item.freeDrag"
@@ -56,7 +55,12 @@ outline: deep
         { id: 'item-2', label: 'Node 2', grid: { x: 100, y: 50, w: 100, h: 100 } },
         { id: 'item-3', label: 'Node 3', grid: { x: 200, y: 100, w: 100, h: 100 } },
         { id: 'item-4', label: 'Node 4', grid: { x: 300, y: 150, w: 100, h: 100 } },
-        { id: 'free-drag', label: 'Free Drag', freeDrag: true, grid: { x: 400, y: 200, w: 100, h: 100, z: 2 } },
+        {
+            id: 'free-drag',
+            label: 'Free Drag',
+            freeDrag: true,
+            grid: { x: 400, y: 200, w: 100, h: 100, z: 2 },
+        },
     ]);
 
     const onDragStart = (nodeId: string) => {

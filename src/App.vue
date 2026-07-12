@@ -1,6 +1,6 @@
 <template>
     <div class="app-container">
-        <Grid :gridCellSize="50" class="grid-demo">
+        <Grid :gridCellSize="50" :layout="layout" class="grid-demo">
             <GridItem
                 v-for="item in layout"
                 :key="item.id"
@@ -10,7 +10,6 @@
                 :w="item.grid.w"
                 :h="item.grid.h"
                 :proximity="100"
-                :allNodes="layout"
                 :draggable="true"
                 :resizable="true"
                 :free-drag="item.freeDrag"
@@ -30,7 +29,7 @@
                 @collision-detected="(collidingIds) => onCollisionDetected(item.id, collidingIds)"
             >
                 <div class="grid-item-content">{{ item.label }}
-                    <button @click="clicked">Click me</button>
+                    <button @click="clicked" style="color:red">Click me</button>
                 </div>
             </GridItem>
         </Grid>

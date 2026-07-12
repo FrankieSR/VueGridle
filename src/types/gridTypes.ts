@@ -15,8 +15,8 @@ export interface GridNode {
 }
 
 export interface ContextItem {
-    onMouseMove: (event: MouseEvent | TouchEvent) => void;
-    onMouseUp: () => void;
+    onPointerMove: (event: PointerEvent) => void;
+    onPointerUp: () => void;
     id: string;
     rect: Rect;
 }
@@ -26,6 +26,7 @@ export interface GridContext {
     gridWidth: Ref<number>;
     gridHeight: Ref<number>;
     gridCellSize: Ref<number>;
+    allNodes: ComputedRef<GridNode[]>;
     isManipulating: Ref<boolean>;
     setActiveItem: (item: ContextItem) => void;
     updateActiveItemRect: (rect: Rect) => void;
@@ -45,12 +46,17 @@ export interface GridItemProps {
     resizable?: boolean;
     draggable?: boolean;
     nodeId: string;
-    allNodes: GridNode[];
+    /**
+     * @deprecated Prefer passing `layout` to the parent `Grid`.
+     */
+    allNodes?: GridNode[];
     modelValue: Rect;
     minWidth?: number;
     minHeight?: number;
     maxWidth?: number;
     maxHeight?: number;
+    focusable?: boolean;
+    ariaLabel?: string;
 }
 
 export interface GridItemEmits {
@@ -77,7 +83,7 @@ export interface GridState {
 
 export interface GridDrag {
     isDragging: Ref<boolean>;
-    startDrag: (event: MouseEvent | TouchEvent) => void;
+    startDrag: (event: PointerEvent) => void;
 }
 
 export interface GridItemSlotProps {
@@ -86,12 +92,16 @@ export interface GridItemSlotProps {
 
 export interface GridResize {
     isResizing: Ref<boolean>;
-    startResize: (direction: string, event: MouseEvent | TouchEvent) => void;
+    startResize: (direction: string, event: PointerEvent) => void;
     resizeHandles: readonly ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
 }
 
 export interface GridActivation {
     activate: () => void;
+}
+
+export interface GridKeyboard {
+    handleKeydown: (event: KeyboardEvent) => void;
 }
 
 export type GridItemReturn = {
@@ -101,8 +111,9 @@ export type GridItemReturn = {
     isActive: ComputedRef<boolean>;
     isNearActive: ComputedRef<boolean>;
     itemStyle: ComputedRef<CSSProperties>;
-    startDrag: (event: MouseEvent | TouchEvent) => void;
-    startResize: (direction: string, event: MouseEvent | TouchEvent) => void;
+    startDrag: (event: PointerEvent) => void;
+    startResize: (direction: string, event: PointerEvent) => void;
     activate: () => void;
+    handleKeydown: (event: KeyboardEvent) => void;
     resizeHandles: readonly ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
 };

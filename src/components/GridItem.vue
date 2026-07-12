@@ -9,8 +9,11 @@
             'vuegridle-highlight': isNearActive,
         }"
         :style="itemStyle"
-        @mousedown="startDrag"
-        @touchstart="startDrag"
+        :tabindex="focusable ? 0 : undefined"
+        role="group"
+        :aria-label="ariaLabel || `Grid item ${nodeId}`"
+        @pointerdown="startDrag"
+        @keydown="handleKeydown"
         @click="activate"
         @contextmenu.prevent
         @dragstart.prevent
@@ -22,8 +25,7 @@
                 :key="handle"
                 class="resize-handle"
                 :class="handle"
-                @mousedown.stop="startResize(handle, $event)"
-                @touchstart.stop="startResize(handle, $event)"
+                @pointerdown.stop="startResize(handle, $event)"
             ></div>
         </template>
     </div>
@@ -42,10 +44,10 @@
         resizable: true,
         draggable: true,
         nodeId: '',
-        allNodes: () => [],
         minWidth: 50,
         minHeight: 50,
         z: 1,
+        focusable: true,
     });
 
     defineSlots<{
@@ -64,6 +66,7 @@
         startDrag,
         startResize,
         activate,
+        handleKeydown,
         resizeHandles,
     } = useGridItem(props, emit);
 </script>

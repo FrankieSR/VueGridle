@@ -1,15 +1,15 @@
 import { ref, computed, inject, watch, type ComputedRef, type Ref, type CSSProperties } from 'vue';
 import { gridSnap } from '@/utils/gridUtils';
+import { gridContextKey } from '@/context/gridContext';
 import {
     type GridItemProps,
     type GridItemEmits,
     type GridState,
-    type GridContext,
     type Rect,
 } from '@/types/gridTypes';
 
 export function useGridState(props: GridItemProps, emit: GridItemEmits): GridState {
-    const gridContext = inject<GridContext>('gridContext');
+    const gridContext = inject(gridContextKey);
 
     if (!gridContext) {
         throw new Error('VueGridle: GridItem must be rendered inside a Grid component.');

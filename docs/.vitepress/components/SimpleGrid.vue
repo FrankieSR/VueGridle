@@ -1,7 +1,7 @@
 <template>
     <div class="app-container">
         <div class="main-content">
-            <Grid :gridCellSize="50" class="grid-demo">
+            <Grid :gridCellSize="50" :layout="layout" class="grid-demo">
                 <GridItem
                     v-for="item in layout"
                     :key="item.id"
@@ -10,7 +10,6 @@
                     :y="item.grid.y"
                     :w="item.grid.w"
                     :h="item.grid.h"
-                    :allNodes="layout"
                     :draggable="true"
                     :resizable="true"
                     :free-drag="item.freeDrag"

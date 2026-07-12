@@ -3,6 +3,7 @@ import { useGridDrag } from './useGridDrag';
 import { useGridResize } from './useGridResize';
 import { useGridState } from './useGridState';
 import { useGridActivation } from './useGridActivation';
+import { useGridKeyboard } from './useGridKeyboard';
 import {
     type GridItemProps,
     type GridItemEmits,
@@ -23,6 +24,7 @@ export function useGridItem(props: GridItemProps, emit: GridItemEmits): GridItem
         position,
         size,
     });
+    const { handleKeydown } = useGridKeyboard(props, position, size, emit, activate);
 
     return {
         item,
@@ -34,8 +36,9 @@ export function useGridItem(props: GridItemProps, emit: GridItemEmits): GridItem
         startDrag,
         startResize,
         activate,
+        handleKeydown,
         resizeHandles,
     };
 }
 
-export { useGridDrag, useGridResize, useGridState, useGridActivation };
+export { useGridDrag, useGridResize, useGridState, useGridActivation, useGridKeyboard };

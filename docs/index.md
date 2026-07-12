@@ -2,39 +2,38 @@
 layout: home
 
 hero:
-  name: 'VueGridle'
-  image:
-    src: ./logo.png
-    alt: VueGridle
-  tagline: "Ultra-light (~4kB gzip) grid library for Vue 3, powered by TypeScript & Composition API."
-  actions:
-    - theme: brand
-      text: 'Get Started'
-      link: /guide/getting-started
-    - theme: alt
-      text: 'View on GitHub'
-      link: 'https://github.com/FrankieSR/VueGridle'
+    name: 'VueGridle'
+    image:
+        src: ./logo.png
+        alt: VueGridle
+    tagline: 'Small, typed grid library for Vue 3, powered by TypeScript & Composition API.'
+    actions:
+        - theme: brand
+          text: 'Get Started'
+          link: /guide/getting-started
+        - theme: alt
+          text: 'View on GitHub'
+          link: 'https://github.com/FrankieSR/VueGridle'
 
 features:
-  - icon: 🖱️
-    title: Drag & Drop Grid Snapping
-    details: Snap items to the grid for precise layouts.
-  - icon: 🌍
-    title: Free Movement Drag
-    details: Enjoy optional free-form dragging without grid constraints.
-  - icon: 📏
-    title: Resizable
-    details: Easily resize items with min/max limits for perfect control.
-  - icon: ⚠️
-    title: Collision Detection
-    details: Get real-time alerts when items overlap.
-  - icon: 🛠️
-    title: TypeScript
-    details: Strictly typed for cleaner code and fewer bugs.
-  - icon: 🎨
-    title: Customizable
-    details: Tweak everything via props, events, and CSS variables.
-
+    - icon: 🖱️
+      title: Drag & Drop Grid Snapping
+      details: Snap items to the grid for precise layouts.
+    - icon: 🌍
+      title: Free Movement Drag
+      details: Enjoy optional free-form dragging without grid constraints.
+    - icon: 📏
+      title: Resizable
+      details: Easily resize items with min/max limits for perfect control.
+    - icon: ⚠️
+      title: Collision Detection
+      details: Get real-time alerts when items overlap.
+    - icon: 🛠️
+      title: TypeScript
+      details: Strictly typed for cleaner code and fewer bugs.
+    - icon: 🎨
+      title: Customizable
+      details: Tweak everything via props, events, and CSS variables.
 ---
 
 ---
