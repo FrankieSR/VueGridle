@@ -1,4 +1,4 @@
-import { ref, computed, inject, onMounted, type ComputedRef, type Ref } from 'vue';
+import { ref, computed, inject, watch, type ComputedRef, type Ref } from 'vue';
 import { gridSnap } from '@/utils/gridUtils';
 import {
     type GridItemProps,
@@ -61,24 +61,48 @@ export function useGridState(props: GridItemProps, emit: GridItemEmits): GridSta
         return Math.sqrt(dx * dx + dy * dy);
     };
 
-    onMounted(() => {
+    const syncFromProps = () => {
+        const source = props.modelValue ?? {
+            x: props.x ?? 0,
+            y: props.y ?? 0,
+            w: props.w ?? 200,
+            h: props.h ?? 100,
+        };
+
         position.value = {
             x: props.freeDrag
-                ? (props.x ?? 0)
-                : gridSnap(props.x ?? 0, gridContext.gridCellSize.value),
+                ? source.x
+                : gridSnap(source.x, gridContext.gridCellSize.value),
             y: props.freeDrag
-                ? (props.y ?? 0)
-                : gridSnap(props.y ?? 0, gridContext.gridCellSize.value),
+                ? source.y
+                : gridSnap(source.y, gridContext.gridCellSize.value),
         };
         size.value = {
             w: props.freeDrag
-                ? (props.w ?? 200)
-                : gridSnap(props.w ?? 200, gridContext.gridCellSize.value),
+                ? source.w
+                : gridSnap(source.w, gridContext.gridCellSize.value),
             h: props.freeDrag
-                ? (props.h ?? 100)
-                : gridSnap(props.h ?? 100, gridContext.gridCellSize.value),
+                ? source.h
+                : gridSnap(source.h, gridContext.gridCellSize.value),
         };
-    });
+    };
+
+    watch(
+        () => [
+            props.modelValue?.x,
+            props.modelValue?.y,
+            props.modelValue?.w,
+            props.modelValue?.h,
+            props.x,
+            props.y,
+            props.w,
+            props.h,
+            props.freeDrag,
+            gridContext.gridCellSize.value,
+        ],
+        syncFromProps,
+        { immediate: true },
+    );
 
     return {
         position,
