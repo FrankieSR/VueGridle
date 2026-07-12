@@ -1,9 +1,6 @@
-![VueGridle Banner](./public/logo.png)
+# VueGridle
 
-# VueGridle 🚀 - Vue 3 Grid System
-
-`VueGridle` is a small, typed, and flexible grid library for Vue 3.  
-Built with TypeScript and Composition API for smooth, dynamic layouts.
+Small, typed grid primitives for Vue 3 dashboards and draggable layouts.
 
 ---
 
@@ -14,23 +11,18 @@ Built with TypeScript and Composition API for smooth, dynamic layouts.
 
 ---
 
-## Features 🌟
+## Why VueGridle
 
-- 🖱️ **Drag & Drop Grid Snapping** – Snap items to the grid for precise layouts.
-- 🌍 **Free Movement Drag** – Enjoy optional free-form dragging without grid constraints.
-- 📏 **Resizable** – Easily resize items with min/max limits for perfect control.
-- ⚠️ **Collision Detection** – Get real-time alerts when items overlap.
-- 🛠️ **TypeScript** – Strictly typed for cleaner code and fewer bugs.
-- 🎨 **Customizable** – Tweak everything via props, events, and CSS variables.
+- **Controlled layout API**: use `v-model` / `modelValue` as the source of truth.
+- **Drag and resize**: move and resize items with grid snapping or free movement.
+- **Collision detection**: pass `layout` once to `Grid` and receive overlap events from items.
+- **Keyboard accessible**: focus items with Tab, move with arrow keys, resize with Shift + arrow keys.
+- **Typed Vue 3 API**: built with TypeScript and Composition API.
+- **Small public surface**: `Grid`, `GridItem`, and exported types.
 
 ---
 
 ## Installation ⚡
-
-### Prerequisites
-
-- Vue 3.x
-- Node.js 18+ (recommended)
 
 ### Via npm
 
@@ -68,6 +60,13 @@ Now you can use `<Grid>` and `<GridItem>` in your templates.
 
 ---
 
+## Compatibility
+
+- Vue 3
+- TypeScript projects and JavaScript projects
+- Modern browsers with Pointer Events support
+- SSR: browser-only interactions run after mount; full SSR hardening is planned
+
 ## Basic Usage
 
 **Example** – A simple grid with two draggable items:
@@ -94,6 +93,7 @@ Now you can use `<Grid>` and `<GridItem>` in your templates.
 <script setup lang="ts">
     import { ref } from 'vue';
     import { Grid, GridItem } from 'vuegridle';
+    import 'vuegridle/style.css';
 
     const layout = ref([
         { id: 'item-1', grid: { x: 0, y: 0, w: 200, h: 100 } },
@@ -103,6 +103,34 @@ Now you can use `<Grid>` and `<GridItem>` in your templates.
 ```
 
 ---
+
+## Controlled API
+
+`GridItem` is controlled through `v-model`. Keep your layout in application state and let `GridItem` emit updates while dragging, resizing, or using keyboard controls.
+
+```vue
+<Grid :layout="layout">
+    <GridItem
+        v-for="item in layout"
+        :key="item.id"
+        :nodeId="item.id"
+        v-model="item.grid"
+    />
+</Grid>
+```
+
+`Grid :layout` is the preferred collision context API. `GridItem :allNodes` is deprecated and kept only for backward compatibility.
+
+---
+
+## Accessibility
+
+Grid items are focusable by default.
+
+- `Enter` / `Space`: activate the focused item
+- Arrow keys: move the item by one grid cell
+- `Shift` + arrow keys: resize the item by one grid cell
+- `ariaLabel`: provide a readable label when `nodeId` is not meaningful
 
 ## API at a Glance
 
@@ -155,15 +183,31 @@ Now you can use `<Grid>` and `<GridItem>` in your templates.
     <GridItem :freeDrag="true" ... />
     ```
 
-For a deeper dive (including advanced collision handling, dynamic layouts, styling tips, etc.), see the **[Full Documentation](https://frankiesr.github.io/VueGridle/)**.
+For a deeper dive, see the **[Full Documentation](https://frankiesr.github.io/VueGridle/)**.
+
+---
+
+## Development
+
+```bash
+npm run test
+npm run build
+npm run docs:build
+```
+
+---
+
+## Contributing
+
+Issues and pull requests are welcome. Please read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a larger change.
+
+Security issues should be reported privately. See [SECURITY.md](./SECURITY.md).
 
 ---
 
 ## License
 
-`VueGridle` is released under the [MIT License](./LICENSE).
-
----
+MIT. See [LICENSE](./LICENSE).
 
 **Enjoy building dynamic, interactive grids with `VueGridle`!**  
 Contributions & feedback welcome.
