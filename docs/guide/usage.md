@@ -8,7 +8,7 @@ Below is the source code for the basic example shown above:
 
 ```vue
 <template>
-    <Grid :gridCellSize="50" class="grid-demo">
+    <Grid :gridCellSize="50" :layout="layout" class="grid-demo">
         <GridItem
             v-for="item in layout"
             :key="item.id"
@@ -18,7 +18,6 @@ Below is the source code for the basic example shown above:
             :w="item.grid.w"
             :h="item.grid.h"
             :proximity="100"
-            :allNodes="layout"
             :draggable="true"
             :resizable="true"
             :free-drag="item.freeDrag"

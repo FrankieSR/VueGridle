@@ -25,6 +25,7 @@ export function useGridResize(
 
     const isResizing = ref(false);
     const resizeDirection = ref<string | null>(null);
+    const allNodes = computed(() => props.allNodes ?? gridContext.allNodes.value);
     const startMouse = ref<{ x: number; y: number }>({ x: 0, y: 0 });
     const startSize = ref<{ w: number; h: number }>({ w: 0, h: 0 });
     const startPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -124,6 +125,7 @@ export function useGridResize(
         };
 
         let collidingIds: string[] = [];
+        const nodes = allNodes.value;
 
         const hasCollision =
             !props.freeDrag &&
@@ -133,12 +135,12 @@ export function useGridResize(
                 snappedRect.y,
                 snappedRect.w,
                 snappedRect.h,
-                props.allNodes,
+                nodes,
                 props.freeDrag ?? false,
             );
 
         if (hasCollision) {
-            collidingIds = props.allNodes.reduce((ids: string[], node: GridNode) => {
+            collidingIds = nodes.reduce((ids: string[], node: GridNode) => {
                 if (node.id !== props.nodeId && isCollision(snappedRect, node.grid)) {
                     ids.push(node.id);
                 }

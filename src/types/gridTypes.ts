@@ -26,6 +26,7 @@ export interface GridContext {
     gridWidth: Ref<number>;
     gridHeight: Ref<number>;
     gridCellSize: Ref<number>;
+    allNodes: ComputedRef<GridNode[]>;
     isManipulating: Ref<boolean>;
     setActiveItem: (item: ContextItem) => void;
     updateActiveItemRect: (rect: Rect) => void;
@@ -45,7 +46,10 @@ export interface GridItemProps {
     resizable?: boolean;
     draggable?: boolean;
     nodeId: string;
-    allNodes: GridNode[];
+    /**
+     * @deprecated Prefer passing `layout` to the parent `Grid`.
+     */
+    allNodes?: GridNode[];
     modelValue: Rect;
     minWidth?: number;
     minHeight?: number;

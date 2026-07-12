@@ -15,6 +15,7 @@
             <div class="grid-wrapper">
                 <Grid
                     :gridCellSize="50"
+                    :layout="layout"
                     class="grid-demo"
                     @dragover.prevent
                     @drop="handleDropInGrid"
@@ -27,7 +28,6 @@
                         :y="item.grid.y"
                         :w="item.grid.w"
                         :h="item.grid.h"
-                        :allNodes="layout"
                         :draggable="true"
                         v-model="item.grid"
                         :minWidth="100"

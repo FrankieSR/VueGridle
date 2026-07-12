@@ -42,7 +42,6 @@
         resizable: true,
         draggable: true,
         nodeId: '',
-        allNodes: () => [],
         minWidth: 50,
         minHeight: 50,
         z: 1,

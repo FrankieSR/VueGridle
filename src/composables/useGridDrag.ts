@@ -1,4 +1,4 @@
-import { ref, inject, onUnmounted, type Ref } from 'vue';
+import { ref, computed, inject, onUnmounted, type Ref } from 'vue';
 import { gridSnapWithinBounds, checkCollision, isCollision } from '@/utils/gridUtils';
 import { clamp, getClientCoordinates } from '@/utils/helpers';
 import { addGlobalListeners, removeGlobalListeners } from '@/utils/eventListeners';
@@ -25,6 +25,7 @@ export function useGridDrag(
 
     const isDragging = ref(false);
     const dragInitiated = ref(false);
+    const allNodes = computed(() => props.allNodes ?? gridContext.allNodes.value);
     const startMouse = ref<{ x: number; y: number }>({ x: 0, y: 0 });
     const startPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 });
 
@@ -77,11 +78,10 @@ export function useGridDrag(
         const newY = props.freeDrag
             ? clamp(nextY, 0, maxY)
             : gridSnapWithinBounds(nextY, 0, maxY, gridContext.gridCellSize.value);
+        const nodes = allNodes.value;
 
-        if (
-            checkCollision(props.nodeId, newX, newY, w, h, props.allNodes, props.freeDrag ?? false)
-        ) {
-            const collidingIds = props.allNodes
+        if (checkCollision(props.nodeId, newX, newY, w, h, nodes, props.freeDrag ?? false)) {
+            const collidingIds = nodes
                 .filter(
                     (node: GridNode) =>
                         node.id !== props.nodeId &&
@@ -93,7 +93,7 @@ export function useGridDrag(
 
         if (
             props.freeDrag ||
-            !checkCollision(props.nodeId, newX, newY, w, h, props.allNodes, props.freeDrag ?? false)
+            !checkCollision(props.nodeId, newX, newY, w, h, nodes, props.freeDrag ?? false)
         ) {
             position.value = { x: newX, y: newY };
             if (props.nodeId === gridContext.activeItemId.value) {

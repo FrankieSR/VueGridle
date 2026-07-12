@@ -15,14 +15,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, provide, onMounted, onUnmounted } from 'vue';
-import { type GridContext, type Rect, type ContextItem } from '@/types/gridTypes';
+import { ref, computed, provide, onMounted, onUnmounted } from 'vue';
+import { type GridContext, type Rect, type ContextItem, type GridNode } from '@/types/gridTypes';
 
 const props = defineProps<{
     gridCellSize?: number;
+    layout?: GridNode[];
 }>();
 
 const gridCellSize = ref(props.gridCellSize ?? 50);
+const allNodes = computed(() => props.layout ?? []);
 
 const gridContainer = ref<HTMLElement | null>(null);
 const gridWidth = ref<number>(0);
@@ -68,6 +70,7 @@ provide<GridContext>('gridContext', {
     gridWidth,
     gridHeight,
     gridCellSize,
+    allNodes,
     isManipulating,
     setActiveItem,
     updateActiveItemRect,
