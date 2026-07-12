@@ -70,6 +70,7 @@ export default defineConfig({
                     { text: 'Add and Remove', link: '/examples/add-remove' },
                     { text: 'Drag Outside', link: '/examples/drag-outside' },
                     { text: 'Collision Handling', link: '/examples/collision-handling' },
+                    { text: 'Performance Benchmark', link: '/examples/performance-benchmark' },
                 ],
             },
         ],

@@ -1,9 +1,5 @@
 import { ref, computed, inject, onUnmounted, type Ref } from 'vue';
-import {
-    gridSnapWithinBounds,
-    createCollisionIndex,
-    getCollidingNodeIds,
-} from '@/utils/gridUtils';
+import { gridSnapWithinBounds, createCollisionIndex, getCollidingNodeIds } from '@/utils/gridUtils';
 import { clamp, getClientCoordinates } from '@/utils/helpers';
 import { addGlobalListeners, removeGlobalListeners } from '@/utils/eventListeners';
 import { gridContextKey } from '@/context/gridContext';
@@ -35,6 +31,20 @@ export function useGridDrag(
 
     let rafId: number | null = null;
     let latestEvent: PointerEvent | null = null;
+    let lastCollisionKey = '';
+
+    const emitCollisionDetected = (collidingIds: string[]) => {
+        if (collidingIds.length === 0) {
+            lastCollisionKey = '';
+            return;
+        }
+
+        const collisionKey = collidingIds.join('\0');
+        if (collisionKey === lastCollisionKey) return;
+
+        lastCollisionKey = collisionKey;
+        emit('collisionDetected', collidingIds);
+    };
 
     const startDrag = (event: PointerEvent) => {
         if (!props.draggable) return;
@@ -85,6 +95,9 @@ export function useGridDrag(
         const newY = props.freeDrag
             ? clamp(nextY, 0, maxY)
             : gridSnapWithinBounds(nextY, 0, maxY, gridContext.gridCellSize.value);
+
+        if (newX === position.value.x && newY === position.value.y) return;
+
         const nodes = allNodes.value;
 
         const collidingIds = getCollidingNodeIds(
@@ -96,9 +109,7 @@ export function useGridDrag(
         );
         const hasCollision = collidingIds.length > 0;
 
-        if (hasCollision) {
-            emit('collisionDetected', collidingIds);
-        }
+        emitCollisionDetected(collidingIds);
 
         if (props.freeDrag || !hasCollision) {
             position.value = { x: newX, y: newY };
@@ -134,6 +145,7 @@ export function useGridDrag(
         }
 
         latestEvent = null;
+        lastCollisionKey = '';
         removeGlobalListeners(onPointerMove, stopDrag);
         gridContext.clearActiveItem();
 
@@ -158,6 +170,7 @@ export function useGridDrag(
         }
 
         latestEvent = null;
+        lastCollisionKey = '';
         removeGlobalListeners(onPointerMove, stopDrag);
 
         if (isDragging.value) {

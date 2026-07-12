@@ -1,9 +1,5 @@
 import { ref, computed, inject, onUnmounted, type Ref } from 'vue';
-import {
-    gridSnapWithinBounds,
-    createCollisionIndex,
-    getCollidingNodeIds,
-} from '@/utils/gridUtils';
+import { gridSnapWithinBounds, createCollisionIndex, getCollidingNodeIds } from '@/utils/gridUtils';
 import { clamp, getClientCoordinates } from '@/utils/helpers';
 import { addGlobalListeners, removeGlobalListeners } from '@/utils/eventListeners';
 import { gridContextKey } from '@/context/gridContext';
@@ -40,6 +36,20 @@ export function useGridResize(
 
     let rafId: number | null = null;
     let latestEvent: PointerEvent | null = null;
+    let lastCollisionKey = '';
+
+    const emitCollisionDetected = (collidingIds: string[]) => {
+        if (collidingIds.length === 0) {
+            lastCollisionKey = '';
+            return;
+        }
+
+        const collisionKey = collidingIds.join('\0');
+        if (collisionKey === lastCollisionKey) return;
+
+        lastCollisionKey = collisionKey;
+        emit('collisionDetected', collidingIds);
+    };
 
     const startResize = (direction: string, event: PointerEvent) => {
         if (!props.resizable) return;
@@ -123,13 +133,32 @@ export function useGridResize(
         const snappedRect = {
             x: props.freeDrag
                 ? newRect.x
-                : gridSnapWithinBounds(newRect.x, 0, gridContext.gridWidth.value - snappedW, gridCellSize),
+                : gridSnapWithinBounds(
+                      newRect.x,
+                      0,
+                      gridContext.gridWidth.value - snappedW,
+                      gridCellSize,
+                  ),
             y: props.freeDrag
                 ? newRect.y
-                : gridSnapWithinBounds(newRect.y, 0, gridContext.gridHeight.value - snappedH, gridCellSize),
+                : gridSnapWithinBounds(
+                      newRect.y,
+                      0,
+                      gridContext.gridHeight.value - snappedH,
+                      gridCellSize,
+                  ),
             w: snappedW,
             h: snappedH,
         };
+
+        if (
+            snappedRect.x === position.value.x &&
+            snappedRect.y === position.value.y &&
+            snappedRect.w === size.value.w &&
+            snappedRect.h === size.value.h
+        ) {
+            return;
+        }
 
         const nodes = allNodes.value;
         const collidingIds = props.freeDrag
@@ -143,9 +172,7 @@ export function useGridResize(
               );
         const hasCollision = collidingIds.length > 0;
 
-        if (hasCollision) {
-            emit('collisionDetected', collidingIds);
-        }
+        emitCollisionDetected(collidingIds);
 
         if (props.freeDrag || !hasCollision) {
             position.value = { x: snappedRect.x, y: snappedRect.y };
@@ -187,6 +214,7 @@ export function useGridResize(
             rafId = null;
         }
         latestEvent = null;
+        lastCollisionKey = '';
         removeGlobalListeners(onPointerMove, stopResize);
         gridContext.clearActiveItem();
 
@@ -206,6 +234,7 @@ export function useGridResize(
         }
 
         latestEvent = null;
+        lastCollisionKey = '';
         removeGlobalListeners(onPointerMove, stopResize);
 
         if (isResizing.value) {

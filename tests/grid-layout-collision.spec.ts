@@ -30,6 +30,10 @@ const GridCollisionHarness = defineComponent({
             type: Function as PropType<(ids: string[]) => void>,
             required: true,
         },
+        onDrag: {
+            type: Function as PropType<(x: number, y: number) => void>,
+            default: undefined,
+        },
     },
     setup(props) {
         const updateNode = (node: GridNode, value: Rect) => {
@@ -57,6 +61,7 @@ const GridCollisionHarness = defineComponent({
                                     ? {
                                           allNodes: props.overrideNodes,
                                           onCollisionDetected: props.onCollision,
+                                          onDrag: props.onDrag,
                                       }
                                     : {}),
                                 'onUpdate:modelValue': (value: Rect) => updateNode(node, value),
@@ -137,8 +142,32 @@ describe('Grid layout collision context', () => {
         await nextTick();
         dispatchPointerMove(110, 0);
         await nextTick();
+        dispatchPointerMove(120, 0);
+        await nextTick();
 
         expect(onCollision).toHaveBeenCalledWith(['b']);
+        expect(onCollision).toHaveBeenCalledTimes(1);
+    });
+
+    it('skips drag updates while pointer movement stays in the same snapped grid cell', async () => {
+        const onCollision = vi.fn();
+        const onDrag = vi.fn();
+        const wrapper = mount(GridCollisionHarness, {
+            props: {
+                layout: createLayout(300),
+                onCollision,
+                onDrag,
+            },
+        });
+
+        dispatchPointerDown(wrapper.findAll('.vuegridle-grid-item')[0].element, 0, 0);
+        await nextTick();
+        dispatchPointerMove(10, 0);
+        await nextTick();
+
+        expect(onDrag).not.toHaveBeenCalled();
+        expect(onCollision).not.toHaveBeenCalled();
+        expect(wrapper.props('layout')[0].grid).toEqual({ x: 0, y: 0, w: 100, h: 100 });
     });
 
     it('keeps deprecated GridItem allNodes as an override over parent layout', async () => {
@@ -231,6 +260,32 @@ describe('spatial collision index', () => {
         );
     });
 
+    it.each([100, 250, 500])(
+        'keeps collision candidate counts small with %i benchmark items',
+        (count) => {
+            const nodes: GridNode[] = [
+                { id: 'active', grid: { x: 0, y: 0, w: 50, h: 50 } },
+                { id: 'hit', grid: { x: 50, y: 0, w: 50, h: 50 } },
+                ...Array.from({ length: count }, (_, index) => ({
+                    id: `far-${index}`,
+                    grid: {
+                        x: 500 + (index % 25) * 100,
+                        y: Math.floor(index / 25) * 100,
+                        w: 50,
+                        h: 50,
+                    },
+                })),
+            ];
+            const index = createCollisionIndex(nodes, 50);
+            const rect = { x: 50, y: 0, w: 50, h: 50 };
+            const candidates = index.findCandidates(rect);
+
+            expect(candidates.map((node) => node.id)).toEqual(['hit']);
+            expect(candidates.length).toBeLessThan(10);
+            expect(getCollidingNodeIds('active', rect, nodes, false, index)).toEqual(['hit']);
+        },
+    );
+
     it('uses a rebuilt index when layout positions change', () => {
         const nodes = createLayout(300);
         let index = createCollisionIndex(nodes, 50);
@@ -240,8 +295,8 @@ describe('spatial collision index', () => {
         nodes[1].grid = { x: 100, y: 0, w: 100, h: 100 };
         index = createCollisionIndex(nodes, 50);
 
-        expect(getCollidingNodeIds('a', { x: 100, y: 0, w: 100, h: 100 }, nodes, false, index)).toEqual([
-            'b',
-        ]);
+        expect(
+            getCollidingNodeIds('a', { x: 100, y: 0, w: 100, h: 100 }, nodes, false, index),
+        ).toEqual(['b']);
     });
 });
