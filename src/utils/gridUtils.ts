@@ -1,13 +1,8 @@
-import { type GridNode } from '@/types/gridTypes';
-interface Rect {
-    x: number;
-    y: number;
-    w: number;
-    h: number;
-}
+import { type CollisionIndex, type GridNode, type Rect } from '@/types/gridTypes';
 
-const collisionCache = new Map<string, boolean>();
-let lastNodesHash = 0;
+const collisionIdsCache = new Map<string, string[]>();
+let collisionIndexVersion = 0;
+const MAX_COLLISION_CACHE_ENTRIES = 1000;
 
 /**
  * Snaps a value to the nearest multiple of gridSize.
@@ -55,53 +50,67 @@ export const isCollision = (rectA: Rect, rectB: Rect): boolean =>
     rectA.y < rectB.y + rectB.h &&
     rectA.y + rectA.h > rectB.y;
 
-/**
- * Computes a numerical hash for a string using the djb2 algorithm.
- *
- * The algorithm initializes with the value 5381 and, for each character in the string,
- * updates the hash as follows:
- *    hash = (hash * 33) ^ charCode;
- * Finally, it returns the hash as an unsigned 32-bit integer.
- *
- * @param s - The input string.
- * @returns The numerical hash of the string.
- */
-const hashString = (s: string): number => {
-    let hash = 5381;
+const getBucketKey = (x: number, y: number): string => `${x}:${y}`;
 
-    for (let i = 0; i < s.length; i++) {
-        hash = (hash * 33) ^ s.charCodeAt(i);
-    }
-    return hash >>> 0;
+const getBucketRange = (rect: Rect, bucketSize: number) => {
+    const size = Math.max(1, bucketSize);
+    const minX = Math.floor(rect.x / size);
+    const minY = Math.floor(rect.y / size);
+    const maxX = Math.floor((rect.x + Math.max(0, rect.w - 1)) / size);
+    const maxY = Math.floor((rect.y + Math.max(0, rect.h - 1)) / size);
+
+    return { minX, minY, maxX, maxY };
 };
 
-/**
- * Generates a numerical hash representing the state of an array of grid nodes.
- *
- * For each node, it combines the hash of its id (using djb2) with its grid properties.
- * This allows quick determination if the nodes' state has changed.
- *
- * @param nodes - Array of grid nodes.
- * @returns The numerical hash representing the state of nodes.
- */
-const generateNodesHash = (nodes: GridNode[]): number => {
-    let hash = 0;
-    for (const {
-        id,
-        grid: { x, y, w, h },
-    } of nodes) {
-        // Combine the id's hash with the numeric grid properties.
-        hash = (hash << 5) - hash + hashString(id) + x + y + w + h;
-        hash |= 0; // Convert to a 32-bit integer
+export const createCollisionIndex = (nodes: GridNode[], bucketSize: number): CollisionIndex => {
+    const buckets = new Map<string, GridNode[]>();
+
+    for (const node of nodes) {
+        const range = getBucketRange(node.grid, bucketSize);
+
+        for (let x = range.minX; x <= range.maxX; x += 1) {
+            for (let y = range.minY; y <= range.maxY; y += 1) {
+                const key = getBucketKey(x, y);
+                const bucket = buckets.get(key);
+
+                if (bucket) {
+                    bucket.push(node);
+                } else {
+                    buckets.set(key, [node]);
+                }
+            }
+        }
     }
-    return hash >>> 0;
+
+    const version = (collisionIndexVersion += 1);
+
+    return {
+        version,
+        findCandidates(rect: Rect) {
+            const candidates = new Set<GridNode>();
+            const range = getBucketRange(rect, bucketSize);
+
+            for (let x = range.minX; x <= range.maxX; x += 1) {
+                for (let y = range.minY; y <= range.maxY; y += 1) {
+                    const bucket = buckets.get(getBucketKey(x, y));
+
+                    if (bucket) {
+                        bucket.forEach((node) => candidates.add(node));
+                    }
+                }
+            }
+
+            return Array.from(candidates);
+        },
+    };
 };
 
 /**
  * Checks for collision of a given rectangle against other grid nodes.
  *
- * The function uses caching to store results if the nodes' state hasn't changed.
- * It compares the numerical hash of the current nodes array to determine if the cache is still valid.
+ * The function can use a spatial collision index to limit checks to nodes in nearby grid buckets.
+ * Cache entries are scoped by the collision index version, so layout changes rebuild the index
+ * without hashing every node on each pointer frame.
  *
  * Visualization of collision detection:
  *
@@ -132,33 +141,44 @@ export const checkCollision = (
     h: number,
     nodes: GridNode[],
     freeDrag: boolean,
+    collisionIndex = createCollisionIndex(nodes, 50),
 ): boolean => {
-    if (!nodes.some((node) => node.id !== nodeId)) return false;
+    return getCollidingNodeIds(nodeId, { x, y, w, h }, nodes, freeDrag, collisionIndex).length > 0;
+};
 
-    const cacheKey = `${nodeId}:${x},${y},${w},${h}:${freeDrag}`;
-    const nodesHash = generateNodesHash(nodes);
+export const getCollidingNodeIds = (
+    nodeId: string,
+    rect: Rect,
+    nodes: GridNode[],
+    freeDrag: boolean,
+    collisionIndex = createCollisionIndex(nodes, 50),
+): string[] => {
+    if (!nodes.some((node) => node.id !== nodeId)) return [];
 
-    if (nodesHash !== lastNodesHash) {
-        collisionCache.clear();
-        lastNodesHash = nodesHash;
+    const cacheKey = `${collisionIndex.version}:${nodeId}:${rect.x},${rect.y},${rect.w},${rect.h}:${freeDrag}`;
+
+    if (collisionIdsCache.has(cacheKey)) {
+        return collisionIdsCache.get(cacheKey)!;
     }
 
-    if (collisionCache.has(cacheKey)) {
-        return collisionCache.get(cacheKey)!;
+    const collidingIds = collisionIndex
+        .findCandidates(rect)
+        .filter(({ id, grid, freeDrag: otherFreeDrag }) => {
+            if (id === nodeId) return false;
+            if (!freeDrag && otherFreeDrag) return false;
+
+            return isCollision(rect, grid);
+        })
+        .map(({ id }) => id);
+
+    if (collisionIdsCache.size >= MAX_COLLISION_CACHE_ENTRIES) {
+        collisionIdsCache.clear();
     }
 
-    const rect: Rect = { x, y, w, h };
-    const hasCollision = nodes.some(({ id, grid, freeDrag: otherFreeDrag }) => {
-        if (id === nodeId) return false;
-        if (!freeDrag && otherFreeDrag) return false;
-
-        return isCollision(rect, grid);
-    });
-
-    collisionCache.set(cacheKey, hasCollision);
-    return hasCollision;
+    collisionIdsCache.set(cacheKey, collidingIds);
+    return collidingIds;
 };
 
 export const clearCollisionCache = (): void => {
-    collisionCache.clear();
+    collisionIdsCache.clear();
 };

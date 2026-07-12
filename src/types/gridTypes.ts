@@ -14,6 +14,11 @@ export interface GridNode {
     z?: number;
 }
 
+export interface CollisionIndex {
+    version: number;
+    findCandidates: (rect: Rect) => GridNode[];
+}
+
 export interface ContextItem {
     onPointerMove: (event: PointerEvent) => void;
     onPointerUp: () => void;
@@ -27,6 +32,7 @@ export interface GridContext {
     gridHeight: Ref<number>;
     gridCellSize: Ref<number>;
     allNodes: ComputedRef<GridNode[]>;
+    collisionIndex: ComputedRef<CollisionIndex>;
     isManipulating: Ref<boolean>;
     setActiveItem: (item: ContextItem) => void;
     updateActiveItemRect: (rect: Rect) => void;

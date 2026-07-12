@@ -1,14 +1,9 @@
 import { ref, computed, inject, onUnmounted, type Ref } from 'vue';
-import { gridSnapWithinBounds, checkCollision, isCollision } from '@/utils/gridUtils';
+import { gridSnapWithinBounds, createCollisionIndex, getCollidingNodeIds } from '@/utils/gridUtils';
 import { clamp, getClientCoordinates } from '@/utils/helpers';
 import { addGlobalListeners, removeGlobalListeners } from '@/utils/eventListeners';
 import { gridContextKey } from '@/context/gridContext';
-import {
-    type GridItemProps,
-    type GridItemEmits,
-    type GridNode,
-    type GridResize,
-} from '@/types/gridTypes';
+import { type GridItemProps, type GridItemEmits, type GridResize } from '@/types/gridTypes';
 
 export function useGridResize(
     props: GridItemProps,
@@ -26,6 +21,11 @@ export function useGridResize(
     const isResizing = ref(false);
     const resizeDirection = ref<string | null>(null);
     const allNodes = computed(() => props.allNodes ?? gridContext.allNodes.value);
+    const collisionIndex = computed(() =>
+        props.allNodes
+            ? createCollisionIndex(props.allNodes, gridContext.gridCellSize.value)
+            : gridContext.collisionIndex.value,
+    );
     const startMouse = ref<{ x: number; y: number }>({ x: 0, y: 0 });
     const startSize = ref<{ w: number; h: number }>({ w: 0, h: 0 });
     const startPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -36,6 +36,20 @@ export function useGridResize(
 
     let rafId: number | null = null;
     let latestEvent: PointerEvent | null = null;
+    let lastCollisionKey = '';
+
+    const emitCollisionDetected = (collidingIds: string[]) => {
+        if (collidingIds.length === 0) {
+            lastCollisionKey = '';
+            return;
+        }
+
+        const collisionKey = collidingIds.join('\0');
+        if (collisionKey === lastCollisionKey) return;
+
+        lastCollisionKey = collisionKey;
+        emit('collisionDetected', collidingIds);
+    };
 
     const startResize = (direction: string, event: PointerEvent) => {
         if (!props.resizable) return;
@@ -119,38 +133,46 @@ export function useGridResize(
         const snappedRect = {
             x: props.freeDrag
                 ? newRect.x
-                : gridSnapWithinBounds(newRect.x, 0, gridContext.gridWidth.value - snappedW, gridCellSize),
+                : gridSnapWithinBounds(
+                      newRect.x,
+                      0,
+                      gridContext.gridWidth.value - snappedW,
+                      gridCellSize,
+                  ),
             y: props.freeDrag
                 ? newRect.y
-                : gridSnapWithinBounds(newRect.y, 0, gridContext.gridHeight.value - snappedH, gridCellSize),
+                : gridSnapWithinBounds(
+                      newRect.y,
+                      0,
+                      gridContext.gridHeight.value - snappedH,
+                      gridCellSize,
+                  ),
             w: snappedW,
             h: snappedH,
         };
 
-        let collidingIds: string[] = [];
-        const nodes = allNodes.value;
-
-        const hasCollision =
-            !props.freeDrag &&
-            checkCollision(
-                props.nodeId,
-                snappedRect.x,
-                snappedRect.y,
-                snappedRect.w,
-                snappedRect.h,
-                nodes,
-                props.freeDrag ?? false,
-            );
-
-        if (hasCollision) {
-            collidingIds = nodes.reduce((ids: string[], node: GridNode) => {
-                if (node.id !== props.nodeId && isCollision(snappedRect, node.grid)) {
-                    ids.push(node.id);
-                }
-                return ids;
-            }, []);
-            emit('collisionDetected', collidingIds);
+        if (
+            snappedRect.x === position.value.x &&
+            snappedRect.y === position.value.y &&
+            snappedRect.w === size.value.w &&
+            snappedRect.h === size.value.h
+        ) {
+            return;
         }
+
+        const nodes = allNodes.value;
+        const collidingIds = props.freeDrag
+            ? []
+            : getCollidingNodeIds(
+                  props.nodeId,
+                  snappedRect,
+                  nodes,
+                  props.freeDrag ?? false,
+                  collisionIndex.value,
+              );
+        const hasCollision = collidingIds.length > 0;
+
+        emitCollisionDetected(collidingIds);
 
         if (props.freeDrag || !hasCollision) {
             position.value = { x: snappedRect.x, y: snappedRect.y };
@@ -192,6 +214,7 @@ export function useGridResize(
             rafId = null;
         }
         latestEvent = null;
+        lastCollisionKey = '';
         removeGlobalListeners(onPointerMove, stopResize);
         gridContext.clearActiveItem();
 
@@ -211,6 +234,7 @@ export function useGridResize(
         }
 
         latestEvent = null;
+        lastCollisionKey = '';
         removeGlobalListeners(onPointerMove, stopResize);
 
         if (isResizing.value) {

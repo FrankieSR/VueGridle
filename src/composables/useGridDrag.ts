@@ -1,14 +1,9 @@
 import { ref, computed, inject, onUnmounted, type Ref } from 'vue';
-import { gridSnapWithinBounds, checkCollision, isCollision } from '@/utils/gridUtils';
+import { gridSnapWithinBounds, createCollisionIndex, getCollidingNodeIds } from '@/utils/gridUtils';
 import { clamp, getClientCoordinates } from '@/utils/helpers';
 import { addGlobalListeners, removeGlobalListeners } from '@/utils/eventListeners';
 import { gridContextKey } from '@/context/gridContext';
-import {
-    type GridItemProps,
-    type GridItemEmits,
-    type GridNode,
-    type GridDrag,
-} from '@/types/gridTypes';
+import { type GridItemProps, type GridItemEmits, type GridDrag } from '@/types/gridTypes';
 
 export function useGridDrag(
     props: GridItemProps,
@@ -26,11 +21,30 @@ export function useGridDrag(
     const isDragging = ref(false);
     const dragInitiated = ref(false);
     const allNodes = computed(() => props.allNodes ?? gridContext.allNodes.value);
+    const collisionIndex = computed(() =>
+        props.allNodes
+            ? createCollisionIndex(props.allNodes, gridContext.gridCellSize.value)
+            : gridContext.collisionIndex.value,
+    );
     const startMouse = ref<{ x: number; y: number }>({ x: 0, y: 0 });
     const startPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 });
 
     let rafId: number | null = null;
     let latestEvent: PointerEvent | null = null;
+    let lastCollisionKey = '';
+
+    const emitCollisionDetected = (collidingIds: string[]) => {
+        if (collidingIds.length === 0) {
+            lastCollisionKey = '';
+            return;
+        }
+
+        const collisionKey = collidingIds.join('\0');
+        if (collisionKey === lastCollisionKey) return;
+
+        lastCollisionKey = collisionKey;
+        emit('collisionDetected', collidingIds);
+    };
 
     const startDrag = (event: PointerEvent) => {
         if (!props.draggable) return;
@@ -81,23 +95,23 @@ export function useGridDrag(
         const newY = props.freeDrag
             ? clamp(nextY, 0, maxY)
             : gridSnapWithinBounds(nextY, 0, maxY, gridContext.gridCellSize.value);
+
+        if (newX === position.value.x && newY === position.value.y) return;
+
         const nodes = allNodes.value;
 
-        if (checkCollision(props.nodeId, newX, newY, w, h, nodes, props.freeDrag ?? false)) {
-            const collidingIds = nodes
-                .filter(
-                    (node: GridNode) =>
-                        node.id !== props.nodeId &&
-                        isCollision({ x: newX, y: newY, w, h }, node.grid),
-                )
-                .map((node) => node.id);
-            emit('collisionDetected', collidingIds);
-        }
+        const collidingIds = getCollidingNodeIds(
+            props.nodeId,
+            { x: newX, y: newY, w, h },
+            nodes,
+            props.freeDrag ?? false,
+            collisionIndex.value,
+        );
+        const hasCollision = collidingIds.length > 0;
 
-        if (
-            props.freeDrag ||
-            !checkCollision(props.nodeId, newX, newY, w, h, nodes, props.freeDrag ?? false)
-        ) {
+        emitCollisionDetected(collidingIds);
+
+        if (props.freeDrag || !hasCollision) {
             position.value = { x: newX, y: newY };
             if (props.nodeId === gridContext.activeItemId.value) {
                 gridContext.updateActiveItemRect({ x: newX, y: newY, w, h });
@@ -131,6 +145,7 @@ export function useGridDrag(
         }
 
         latestEvent = null;
+        lastCollisionKey = '';
         removeGlobalListeners(onPointerMove, stopDrag);
         gridContext.clearActiveItem();
 
@@ -155,6 +170,7 @@ export function useGridDrag(
         }
 
         latestEvent = null;
+        lastCollisionKey = '';
         removeGlobalListeners(onPointerMove, stopDrag);
 
         if (isDragging.value) {
