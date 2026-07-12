@@ -35,7 +35,7 @@
     --resize-handle-hover-opacity: 0.9;
     --grid-item-dragging-scale: 1.03;
     --resize-handle-hover-scale: 1.15;
-    --grid-item-hover-lift: -2px;
+    --grid-item-hover-lift: 0px;
 
     --grid-item-cursor: grab;
     --grid-item-dragging-cursor: grabbing;
@@ -146,10 +146,12 @@
 }
 
 .vuegridle-grid-item.vuegridle-highlight {
-    border: 3px solid var(--grid-item-border-color);
+    outline: 3px solid var(--grid-item-border-color);
+    outline-offset: 0;
 }
 
 .vuegridle-grid-item.vuegridle-active {
-    border: 1px solid var(--grid-item-border-color);
+    outline: 1px solid var(--grid-item-border-color);
+    outline-offset: 0;
     box-shadow: var(--grid-item-active-shadow);
 }
