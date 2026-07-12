@@ -4,7 +4,7 @@ layout: home
 hero:
     name: 'VueGridle'
     image:
-        src: ./logo.png
+        src: /logo.png
         alt: VueGridle
     tagline: 'Controlled grid primitives for Vue 3 dashboards.'
     actions:
