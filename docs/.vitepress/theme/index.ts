@@ -10,6 +10,7 @@ import Example05CollisionHandling from '../components/Example05CollisionHandling
 import Example06KeyboardControls from '../components/Example06KeyboardControls.vue';
 import Example07PersistLayout from '../components/Example07PersistLayout.vue';
 import Example08PerformanceBenchmark from '../components/Example08PerformanceBenchmark.vue';
+import Example09DashboardLayout from '../components/Example09DashboardLayout.vue';
 
 import '../../../dist/vuegridle.css';
 import './custom.css';
@@ -27,6 +28,7 @@ const theme: Theme = {
         app.component('Example06KeyboardControls', Example06KeyboardControls);
         app.component('Example07PersistLayout', Example07PersistLayout);
         app.component('Example08PerformanceBenchmark', Example08PerformanceBenchmark);
+        app.component('Example09DashboardLayout', Example09DashboardLayout);
         app.component('SimpleGrid', SimpleGrid);
     },
 };
