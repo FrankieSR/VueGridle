@@ -6,6 +6,10 @@ outline: deep
 
 This example shows a realistic dashboard setup: typed layout state, stable widget IDs, persistence hooks, and accessible labels.
 
+<div class="demo-container">
+    <Example09DashboardLayout />
+</div>
+
 ## Example Code
 
 ```vue
